@@ -1526,7 +1526,34 @@ submitHyperCode.onclick = () => {
         }
     }
 };
-</script>
+<script>
+/* ===== HYPER ANNE OPENS CODE BOX INSTEAD OF BOOPING ===== */
 
+document.addEventListener("click", function(event) {
+    const target = event.target;
+
+    if (target && target.classList.contains("hyperBouncingAnne")) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        const box = document.getElementById("hyperCodeBox");
+        const input = document.getElementById("hyperCodeInput");
+
+        if (box) {
+            box.style.display = "block";
+        }
+
+        if (input) {
+            input.focus();
+        }
+
+        if (typeof text !== "undefined") {
+            text.textContent = "Hyper Anne wants the secret code.";
+        }
+
+        return false;
+    }
+}, true);
+</script>
 </body>
 </html>
