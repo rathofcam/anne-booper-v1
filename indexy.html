@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anne Booper</title>
+
+<style>
+body {
+    margin: 0;
+    background: linear-gradient(45deg, lavender, pink, lightblue, #fff0f5);
+    background-size: 400% 400%;
+    animation: bgMove 8s infinite alternate;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    touch-action: none;
+}
+
+@keyframes bgMove {
+    0% { background-position: left; }
+    100% { background-position: right; }
+}
+
+.cursed {
+    animation: cursedBg 0.25s infinite;
+    filter: contrast(1.4) saturate(2);
+}
+
+@keyframes cursedBg {
+    0% { background: red; }
+    25% { background: lime; }
+    50% { background: purple; }
+    75% { background: black; }
+    100% { background: hotpink; }
+}
+
+#gameWorld {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2200px;
+    height: 1400px;
+    transform-origin: 0 0;
+}
+
+#mainUI {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    pointer-events: none;
+    z-index: 20;
+}
+
+#mainUI > * {
+    pointer-events: auto;
+}
+
+img {
+    max-width: 260px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+    box-shadow: 0 0 25px hotpink;
+}
+
+img:hover {
+    transform: scale(1.08) rotate(-2deg);
+}
+
+.boop {
+    animation: megaBoop 0.35s ease;
+}
+
+@keyframes megaBoop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2) rotate(6deg); }
+    100% { transform: scale(1); }
+}
+
+#text {
+    margin-top: 15px;
+    font-size: 21px;
+    font-weight: bold;
+    text-align: center;
+    max-width: 460px;
+    background: white;
+    padding: 12px 16px;
+    border-radius: 20px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+#counter {
+    margin-top: 10px;
+    font-size: 17px;
+    font-weight: bold;
+    text-align: center;
+    background: rgba(255,255,255,0.8);
+    padding: 8px 12px;
+    border-radius: 14px;
+    max-width: 740px;
+}
+
+#shop, #saveBox, #cheatBox {
+    display: none;
+    margin-top: 12px;
+    background: rgba(255,255,255,0.92);
+    padding: 12px;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 0 18px hotpink;
+    max-width: 680px;
+}
+
+button {
+    margin: 4px;
+    padding: 8px 11px;
+    border: none;
+    border-radius: 10px;
+    background: hotpink;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:disabled {
+    background: gray;
+    cursor: not-allowed;
+}
+
+input, select {
+    padding: 8px;
+    border-radius: 8px;
+    border: 2px solid hotpink;
+    margin: 4px;
+}
+
+.particle, .floating {
+    position: absolute;
+    font-size: 25px;
+    pointer-events: none;
+    animation: floatUp 1s ease-out forwards;
+    z-index: 50;
+}
+
+@keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-80px) scale(1.6) rotate(20deg); }
+}
+
+.bouncingAnne {
+    position: absolute;
+    width: 90px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px deeppink;
+    z-index: 5;
+    transition: transform 0.08s ease;
+}
+
+.hyperBouncingAnne {
+    position: absolute;
+    width: 105px;
+    border-radius: 18px;
+    box-shadow: 0 0 35px cyan, 0 0 18px hotpink;
+    z-index: 6;
+    filter: saturate(1.8) contrast(1.2);
+    transition: transform 0.08s ease;
+}
+
+#ballChain {
+    display: none;
+    position: absolute;
+    left: 760px;
+    top: 450px;
+    width: 720px;
+    height: 300px;
+    z-index: 10;
+}
+
+.chainLine {
+    position: absolute;
+    top: 40px;
+    width: 3px;
+    height: 150px;
+    background: rgba(0,0,0,0.35);
+    transform-origin: top center;
+}
+
+.ball {
+    position: absolute;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, white, silver 35%, gray 90%);
+    box-shadow: inset -8px -8px 12px rgba(0,0,0,0.25), 0 0 14px rgba(0,0,0,0.25);
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+}
+
+.ball:active {
+    cursor: grabbing;
+}
+
+#cameraHelp {
+    position: fixed;
+    left: 10px;
+    bottom: 10px;
+    background: rgba(255,255,255,0.85);
+    padding: 8px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: bold;
+    z-index: 100;
+    display: none;
+}
+
+#blueScreen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #0078d7;
+    color: white;
+    font-family: Consolas, monospace;
+    z-index: 9999;
+    padding: 40px;
+    font-size: 22px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="gameWorld">
+    <div id="ballChain"></div>
+</div>
+
+<div id="cameraHelp">
+    Camera: drag empty space to move. Wheel/pinch to zoom. Drag the first or last ball to launch the chain.
+</div>
+
+<div id="blueScreen">
+    <h1>:(</h1>
+    <p>Your Anne Booper ran into a problem and needs to restart.</p>
+    <p>Error: TOO_MANY_BOOPS_DETECTED</p>
+    <p>Resetting game...</p>
+</div>
+
+<div id="mainUI">
+    <img id="anne" src="Anne.png" alt="Anne Booper">
+    <div id="text">Click Anne 👆</div>
+    <div id="counter">Boops: 0 | Spendable: 0 | Per Click: 1</div>
+
+    <div id="shop">
+        <h2>🛒 Anne Shop</h2>
+
+        <button id="buyEffects">Buy Effects - 1 Boop</button>
+        <button id="buyHyperBouncing">Buy Hyper Bouncy Anne - 45 Boops</button>
+        <button id="buyBouncing">Buy Bouncy Anne - 15 Boops</button>
+        <button id="buyCannon">Buy Confetti Cannon - 150 Boops</button>
+        <button id="buyBallChain">Buy Ball Chain - 250 Boops</button>
+        <button id="buyDuplicater">Buy Boop Duplicater - 500 Boops</button>
+
+        <br>
+
+        <button id="buyAutoOne">Buy Auto Booper Tier 1 - 1,500 Boops</button>
+        <button id="buyAutoTwo">Buy Auto Booper Tier 2 - 10,000 Boops</button>
+        <button id="buyAutoThree">Buy Auto Booper Tier 3 - 50,000 Boops</button>
+    </div>
+
+    <div id="saveBox">
+        <h2>💾 Save Slots</h2>
+        <select id="saveSlot"></select>
+        <button id="saveGame">Save</button>
+        <button id="loadGame">Load</button>
+    </div>
+
+    <div id="cheatBox">
+        <h2>⌨️ Cheat Code Adder</h2>
+        <input id="cheatInput" placeholder="Enter cheat code">
+        <button id="useCheat">Use Code</button>
+    </div>
+</div>
+
+<script>
+const messages = [
+    "Time to watch my daily psych!",
+    "Psych time!",
+    "Psych while pimple popping.",
+    "I love to pop my pimples",
+    "Why won’t you play Roblox with me?",
+    "Anne requires snacks immediately",
+    "Emergency dopamine requested",
+    "Anne.exe has stopped working",
+    "How’s your poop today?",
+    "Gus, don’t be ridiculous",
+    "I’ve heard it both ways",
+    "This boop has consequences",
+    "The shop is judging your spending habits",
+    "You call that saving boops?",
+    "Anne wants EVERYTHING from the shop",
+    "Buy something already",
+    "That duplicater is looking real tempting...",
+    "Confetti solves all problems",
+    "Bouncing Anne is watching you",
+    "You need more boops. Always more.",
+    "The shop whispers: spend it",
+    "Anne is financially irresponsible",
+    "This is a boop economy",
+    "Inflation? Never heard of her",
+    "Buy now regret later",
+    "You could save… but will you?",
+    "Anne demands upgrades",
+    "The duplicater is basically cheating",
+    "Confetti Cannon = happiness",
+    "Particles make everything better",
+    "Shop unlocked = chaos unlocked",
+    "Anne is now a business",
+    "This is basically capitalism",
+    "More boops = more power",
+    "The shop grows stronger",
+    "You’re addicted now",
+    "There is no escape from boops",
+    "Anne sees your boop count",
+    "Spendable boops are fake money",
+    "Everything is particles now",
+    "The bouncing never stops",
+    "Anne is multiplying",
+    "Click faster",
+    "You need upgrades immediately",
+    "Why save when you can SPEND",
+    "Anne opened a store??",
+    "This shop feels illegal",
+    "Boop stonks rising",
+    "The duplicater hungers",
+    "You’re becoming too powerful",
+    "This was a mistake",
+    "Anne is evolving",
+    "Your boops fear you",
+    "The shop is alive",
+    "You’ve gone too far",
+    "This is only the beginning",
+    "Auto Booper has entered the chat",
+    "Now the game plays itself... barely",
+    "Tier 1 Auto Booper is doing its best",
+    "Tier 2 Auto Booper is where things get spicy",
+    "Tier 3 Auto Booper is absolutely unhinged",
+    "The machines are booping now",
+    "Anne has automated the chaos",
+    "Auto boops do not believe in particles",
+    "Manual boops are still superior",
+    "The shop recommends irresponsible upgrades",
+    "Hyper Bouncy Anne has entered the chaos",
+    "That Anne is moving suspiciously fast",
+    "The Hyper Anne generates boops while judging you",
+    "Regular Bouncy Annes are unionizing",
+    "You can own up to 15 Bouncy Annes because apparently one was not enough",
+    "The Ball Chain is basically Newton’s cradle but cursed",
+    "You can now bonk balls into other balls",
+    "Physics has entered the shop",
+    "The balls demand momentum"
+];
+
+let totalBoops = 0;
+let spendableBoops = 0;
+let perClick = 1;
+
+let effectsBought = false;
+let cannonBought = false;
+let ballChainBought = false;
+let duplicaterLevel = 0;
+let cheatCodeAdderUnlocked = false;
+
+let bouncingAnneCount = 0;
+const maxBouncingAnnes = 15;
+let bouncingAnnes = [];
+
+let hyperBouncingBought = false;
+let hyperBouncingAnne = null;
+let hyperInterval = null;
+
+let autoTier = 0;
+let autoOneInterval = null;
+let autoTwoInterval = null;
+let autoThreeInterval = null;
+
+let lastClickTime = Date.now();
+let resetting = false;
+
+let cameraX = 0;
+let cameraY = 0;
+let cameraZoom = 1;
+let isPanning = false;
+let panStartX = 0;
+let panStartY = 0;
+let panOriginX = 0;
+let panOriginY = 0;
+
+let ballChain = [];
+let ballChainAnimationId = null;
+let draggedBall = null;
+let lastPointerX = 0;
+let lastPointerY = 0;
+let lastPointerTime = 0;
+
+const img = document.getElementById("anne");
+const text = document.getElementById("text");
+const counter = document.getElementById("counter");
+const shop = document.getElementById("shop");
+const saveBox = document.getElementById("saveBox");
+const cheatBox = document.getElementById("cheatBox");
+const gameWorld = document.getElementById("gameWorld");
+const ballChainEl = document.getElementById("ballChain");
+const cameraHelp = document.getElementById("cameraHelp");
+
+const buyEffects = document.getElementById("buyEffects");
+const buyBouncing = document.getElementById("buyBouncing");
+const buyHyperBouncing = document.getElementById("buyHyperBouncing");
+const buyCannon = document.getElementById("buyCannon");
+const buyBallChain = document.getElementById("buyBallChain");
+const buyDuplicater = document.getElementById("buyDuplicater");
+const buyAutoOne = document.getElementById("buyAutoOne");
+const buyAutoTwo = document.getElementById("buyAutoTwo");
+const buyAutoThree = document.getElementById("buyAutoThree");
+const saveSlot = document.getElementById("saveSlot");
+
+for (let i = 1; i <= 50; i++) {
+    const option = document.createElement("option");
+    option.value = i;
+    option.textContent = "Save Slot " + i;
+    saveSlot.appendChild(option);
+}
+
+function updateCamera() {
+    cameraZoom = Math.max(0.55, Math.min(cameraZoom, 1.8));
+    gameWorld.style.transform =
+        "translate(" + cameraX + "px, " + cameraY + "px) scale(" + cameraZoom + ")";
+}
+
+function screenToWorld(x, y) {
+    return {
+        x: (x - cameraX) / cameraZoom,
+        y: (y - cameraY) / cameraZoom
+    };
+}
+
+window.addEventListener("wheel", event => {
+    if (!ballChainBought) return;
+
+    event.preventDefault();
+
+    const oldZoom = cameraZoom;
+    const zoomChange = event.deltaY < 0 ? 1.08 : 0.92;
+    cameraZoom = Math.max(0.55, Math.min(cameraZoom * zoomChange, 1.8));
+
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
+
+    cameraX = mouseX - ((mouseX - cameraX) / oldZoom) * cameraZoom;
+    cameraY = mouseY - ((mouseY - cameraY) / oldZoom) * cameraZoom;
+
+    updateCamera();
+}, { passive: false });
+
+window.addEventListener("pointerdown", event => {
+    if (!ballChainBought) return;
+    if (event.target.classList.contains("ball")) return;
+    if (event.target.closest("#mainUI")) return;
+
+    isPanning = true;
+    panStartX = event.clientX;
+    panStartY = event.clientY;
+    panOriginX = cameraX;
+    panOriginY = cameraY;
+});
+
+window.addEventListener("pointermove", event => {
+    if (!isPanning) return;
+
+    cameraX = panOriginX + (event.clientX - panStartX);
+    cameraY = panOriginY + (event.clientY - panStartY);
+    updateCamera();
+});
+
+window.addEventListener("pointerup", () => {
+    isPanning = false;
+});
+
+function updateCounter() {
+    perClick = Math.pow(2, duplicaterLevel);
+
+    let autoText = "None";
+    if (autoTier === 1) autoText = "Tier 1";
+    if (autoTier === 2) autoText = "Tier 2";
+    if (autoTier === 3) autoText = "Tier 3";
+
+    counter.textContent =
+        "Boops: " + Math.floor(totalBoops) +
+        " | Spendable: " + Math.floor(spendableBoops) +
+        " | Per Click: " + perClick +
+        " | Duplicater: " + duplicaterLevel + "/10" +
+        " | Bouncy Annes: " + bouncingAnneCount + "/15" +
+        " | Hyper: " + (hyperBouncingBought ? "Yes" : "No") +
+        " | Ball Chain: " + (ballChainBought ? "Yes" : "No") +
+        " | Auto: " + autoText;
+
+    shop.style.display = totalBoops >= 75 ? "block" : "none";
+    saveBox.style.display = totalBoops >= 75 ? "block" : "none";
+    cheatBox.style.display = cheatCodeAdderUnlocked ? "block" : "none";
+
+    buyEffects.disabled = effectsBought || spendableBoops < 1;
+    buyHyperBouncing.disabled = hyperBouncingBought || spendableBoops < 45 || totalBoops < 45;
+    buyBouncing.disabled = bouncingAnneCount >= maxBouncingAnnes || spendableBoops < 15;
+    buyCannon.disabled = cannonBought || spendableBoops < 150;
+    buyBallChain.disabled = ballChainBought || spendableBoops < 250;
+    buyDuplicater.disabled = duplicaterLevel >= 10 || spendableBoops < 500;
+
+    buyAutoOne.disabled = autoTier >= 1 || spendableBoops < 1500 || totalBoops < 1500;
+    buyAutoTwo.disabled = autoTier >= 2 || spendableBoops < 10000 || totalBoops < 1500;
+    buyAutoThree.disabled = autoTier >= 3 || spendableBoops < 50000 || totalBoops < 1500;
+}
+
+function showParticles(x, y) {
+    const symbols = ["✨", "💖", "💥", "🌸", "🫧", "⭐", "💫"];
+
+    for (let i = 0; i < 12; i++) {
+        const p = document.createElement("div");
+        p.className = "particle";
+        p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        p.style.left = (x + Math.random() * 140 - 70) + "px";
+        p.style.top = (y + Math.random() * 140 - 70) + "px";
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 1000);
+    }
+}
+
+function confettiCannon() {
+    const confetti = ["🎉", "🎊", "✨", "💥", "🌈"];
+
+    for (let i = 0; i < 45; i++) {
+        const p = document.createElement("div");
+        p.className = "particle";
+        p.textContent = confetti[Math.floor(Math.random() * confetti.length)];
+        p.style.left = Math.random() * window.innerWidth + "px";
+        p.style.top = Math.random() * window.innerHeight + "px";
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 1000);
+    }
+}
+
+function addBoops(amount, fromAuto = false) {
+    if (resetting) return;
+
+    totalBoops += amount;
+    spendableBoops += amount;
+
+    if (totalBoops >= 100000 && totalBoops < 125000) {
+        document.body.classList.add("cursed");
+        if (!fromAuto) text.textContent = "wow. Real dedication.";
+    }
+
+    if (totalBoops >= 125000) {
+        triggerBlueScreenReset();
+        return;
+    }
+
+    updateCounter();
+}
+
+function boop(event) {
+    if (resetting) return;
+
+    lastClickTime = Date.now();
+
+    addBoops(perClick, false);
+
+    if (resetting) return;
+
+    if (totalBoops >= 100000 && totalBoops < 125000) {
+        text.textContent = "wow. Real dedication.";
+    } else if (totalBoops >= 1000 && totalBoops < 1000 + perClick) {
+        text.textContent = "STOP BOOPING ME IM PICKING MY ACNE!";
+    } else if (totalBoops >= 1500 && totalBoops < 1500 + perClick) {
+        text.textContent = "AUTO BOOPERS UNLOCKED!";
+    } else if (totalBoops >= 75 && totalBoops < 75 + perClick) {
+        text.textContent = "SHOP UNLOCKED!";
+    } else if (totalBoops >= 45 && totalBoops < 45 + perClick) {
+        text.textContent = "HYPER BOUNCY ANNE UNLOCKED!";
+    } else {
+        text.textContent = messages[Math.floor(Math.random() * messages.length)];
+    }
+
+    img.classList.add("boop");
+    setTimeout(() => img.classList.remove("boop"), 300);
+
+    const x = event.clientX || window.innerWidth / 2;
+    const y = event.clientY || window.innerHeight / 2;
+
+    const floating = document.createElement("div");
+    floating.className = "floating";
+    floating.textContent = "+" + perClick + " BOOP!";
+    floating.style.left = x + "px";
+    floating.style.top = y + "px";
+    document.body.appendChild(floating);
+    setTimeout(() => floating.remove(), 1000);
+
+    if (effectsBought) showParticles(x, y);
+    if (cannonBought) confettiCannon();
+
+    updateCounter();
+}
+
+img.addEventListener("click", boop);
+
+function createBouncingAnne() {
+    if (bouncingAnneCount >= maxBouncingAnnes) return;
+
+    const anneObj = {
+        el: document.createElement("img"),
+        x: Math.random() * (window.innerWidth - 90),
+        y: Math.random() * (window.innerHeight - 90),
+        dx: Math.random() > 0.5 ? 3 : -3,
+        dy: Math.random() > 0.5 ? 3 : -3,
+        size: 90,
+        hyper: false,
+        bounceScale: 1
+    };
+
+    anneObj.el.src = "Anne.png";
+    anneObj.el.className = "bouncingAnne";
+    anneObj.el.addEventListener("click", boop);
+    document.body.appendChild(anneObj.el);
+
+    bouncingAnnes.push(anneObj);
+    bouncingAnneCount = bouncingAnnes.length;
+
+    startBouncingLoop();
+    updateCounter();
+}
+
+function createHyperBouncingAnne() {
+    if (hyperBouncingBought) return;
+
+    hyperBouncingBought = true;
+
+    hyperBouncingAnne = {
+        el: document.createElement("img"),
+        x: Math.random() * (window.innerWidth - 105),
+        y: Math.random() * (window.innerHeight - 105),
+        dx: 6,
+        dy: 6,
+        size: 105,
+        hyper: true,
+        bounceScale: 1
+    };
+
+    hyperBouncingAnne.el.src = "Anne.png";
+    hyperBouncingAnne.el.className = "hyperBouncingAnne";
+    hyperBouncingAnne.el.addEventListener("click", boop);
+    document.body.appendChild(hyperBouncingAnne.el);
+
+    startHyperIncome();
+    startBouncingLoop();
+    updateCounter();
+}
+
+function removeAllBouncyAnnes() {
+    bouncingAnnes.forEach(anne => anne.el.remove());
+    bouncingAnnes = [];
+    bouncingAnneCount = 0;
+
+    if (hyperBouncingAnne) {
+        hyperBouncingAnne.el.remove();
+        hyperBouncingAnne = null;
+    }
+
+    stopHyperIncome();
+}
+
+function startBouncingLoop() {
+    if (bounceAnimationId) return;
+    bounceAnimationId = requestAnimationFrame(animateBouncyAnnes);
+}function animateBouncyAnnes() {
+    const allAnnes = [...bouncingAnnes];
+
+    if (hyperBouncingAnne) {
+        allAnnes.push(hyperBouncingAnne);
+    }
+
+    // Move Annes
+    allAnnes.forEach(anne => {
+        anne.x += anne.dx;
+        anne.y += anne.dy;
+
+        let hitWall = false;
+
+        if (anne.x <= 0 || anne.x + anne.size >= window.innerWidth) {
+            anne.dx *= -1;
+            hitWall = true;
+        }
+
+        if (anne.y <= 0 || anne.y + anne.size >= window.innerHeight) {
+            anne.dy *= -1;
+            hitWall = true;
+        }
+
+        anne.x = Math.max(0, Math.min(anne.x, window.innerWidth - anne.size));
+        anne.y = Math.max(0, Math.min(anne.y, window.innerHeight - anne.size));
+
+        if (hitWall) {
+            anne.bounceScale = 1.35;
+            if (cannonBought) confettiCannon();
+        }
+    });
+
+    // Anne-to-Anne collisions
+    for (let i = 0; i < allAnnes.length; i++) {
+        for (let j = i + 1; j < allAnnes.length; j++) {
+            const a = allAnnes[i];
+            const b = allAnnes[j];
+
+            const ax = a.x + a.size / 2;
+            const ay = a.y + a.size / 2;
+            const bx = b.x + b.size / 2;
+            const by = b.y + b.size / 2;
+
+            const dx = bx - ax;
+            const dy = by - ay;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const minDistance = (a.size + b.size) / 2;
+
+            if (distance < minDistance && distance > 0) {
+                const nx = dx / distance;
+                const ny = dy / distance;
+
+                const overlap = minDistance - distance;
+
+                a.x -= nx * overlap / 2;
+                a.y -= ny * overlap / 2;
+                b.x += nx * overlap / 2;
+                b.y += ny * overlap / 2;
+
+                const tempDX = a.dx;
+                const tempDY = a.dy;
+
+                a.dx = b.dx;
+                a.dy = b.dy;
+                b.dx = tempDX;
+                b.dy = tempDY;
+
+                a.bounceScale = 1.45;
+                b.bounceScale = 1.45;
+
+                if (cannonBought) confettiCannon();
+            }
+        }
+    }
+
+    // Draw Annes
+    allAnnes.forEach(anne => {
+        anne.bounceScale += (1 - anne.bounceScale) * 0.18;
+
+        const squash = anne.bounceScale;
+        const stretch = 2 - anne.bounceScale;
+        const rotation = (anne.dx + anne.dy) * 5;
+
+        anne.el.style.left = anne.x + "px";
+        anne.el.style.top = anne.y + "px";
+        anne.el.style.transform =
+            "scale(" + squash + "," + stretch + ") rotate(" + rotation + "deg)";
+    });
+
+    if (allAnnes.length > 0) {
+        bounceAnimationId = requestAnimationFrame(animateBouncyAnnes);
+    } else {
+        bounceAnimationId = null;
+    }
+}
+
+function startHyperIncome() {
+    stopHyperIncome();
+
+    if (hyperBouncingBought) {
+        hyperInterval = setInterval(() => {
+            addBoops(1, true);
+        }, 60000);
+    }
+}
+
+function stopHyperIncome() {
+    if (hyperInterval) {
+        clearInterval(hyperInterval);
+        hyperInterval = null;
+    }
+}
+
+function createBallChain() {
+    ballChainBought = true;
+    ballChainEl.style.display = "block";
+    cameraHelp.style.display = "block";
+    ballChainEl.innerHTML = "";
+    ballChain = [];
+
+    const startX = 130;
+    const topY = 40;
+    const ballY = 190;
+    const gap = 56;
+    const count = 7;
+
+    for (let i = 0; i < count; i++) {
+        const line = document.createElement("div");
+        line.className = "chainLine";
+        line.style.left = (startX + i * gap + 26) + "px";
+        ballChainEl.appendChild(line);
+
+        const ball = document.createElement("div");
+        ball.className = "ball";
+        ball.style.left = (startX + i * gap) + "px";
+        ball.style.top = ballY + "px";
+        ballChainEl.appendChild(ball);
+
+        const ballObj = {
+            el: ball,
+            line: line,
+            homeX: startX + i * gap,
+            homeY: ballY,
+            x: startX + i * gap,
+            y: ballY,
+            vx: 0,
+            vy: 0,
+            index: i,
+            dragging: false
+        };
+
+        ball.addEventListener("pointerdown", event => {
+            event.preventDefault();
+            draggedBall = ballObj;
+            draggedBall.dragging = true;
+            ball.setPointerCapture(event.pointerId);
+
+            const world = screenToWorld(event.clientX, event.clientY);
+            const rect = ballChainEl.getBoundingClientRect();
+
+            lastPointerX = world.x;
+            lastPointerY = world.y;
+            lastPointerTime = Date.now();
+        });
+
+        ball.addEventListener("pointermove", event => {
+            if (draggedBall !== ballObj) return;
+
+            const now = Date.now();
+            const world = screenToWorld(event.clientX, event.clientY);
+
+            const chainWorldX = 760;
+            const chainWorldY = 450;
+
+            draggedBall.x = world.x - chainWorldX - 27;
+            draggedBall.y = world.y - chainWorldY - 27;
+
+            draggedBall.vx = (world.x - lastPointerX) / Math.max(1, now - lastPointerTime) * 16;
+            draggedBall.vy = (world.y - lastPointerY) / Math.max(1, now - lastPointerTime) * 16;
+
+            lastPointerX = world.x;
+            lastPointerY = world.y;
+            lastPointerTime = now;
+        });
+
+        ball.addEventListener("pointerup", event => {
+            if (draggedBall !== ballObj) return;
+
+            draggedBall.dragging = false;
+            draggedBall = null;
+        });
+
+        ballChain.push(ballObj);
+    }
+
+    startBallChainLoop();
+    updateCounter();
+}
+
+function startBallChainLoop() {
+    if (ballChainAnimationId) return;
+    ballChainAnimationId = requestAnimationFrame(animateBallChain);
+}
+
+function animateBallChain() {
+    if (!ballChainBought) {
+        ballChainAnimationId = null;
+        return;
+    }
+
+    // Move balls back toward home positions
+    ballChain.forEach(ball => {
+        if (!ball.dragging) {
+            const spring = 0.035;
+            const friction = 0.94;
+
+            ball.vx += (ball.homeX - ball.x) * spring;
+            ball.vy += (ball.homeY - ball.y) * spring;
+
+            ball.vx *= friction;
+            ball.vy *= friction;
+
+            ball.x += ball.vx;
+            ball.y += ball.vy;
+        }
+    });
+
+    // Ball-to-ball collisions
+    for (let i = 0; i < ballChain.length; i++) {
+        for (let j = i + 1; j < ballChain.length; j++) {
+            const a = ballChain[i];
+            const b = ballChain[j];
+
+            const ax = a.x + 27;
+            const ay = a.y + 27;
+            const bx = b.x + 27;
+            const by = b.y + 27;
+
+            const dx = bx - ax;
+            const dy = by - ay;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const minDist = 54;
+
+            if (dist < minDist && dist > 0) {
+                const nx = dx / dist;
+                const ny = dy / dist;
+                const overlap = minDist - dist;
+
+                if (!a.dragging) {
+                    a.x -= nx * overlap / 2;
+                    a.y -= ny * overlap / 2;
+                }
+
+                if (!b.dragging) {
+                    b.x += nx * overlap / 2;
+                    b.y += ny * overlap / 2;
+                }
+
+                const tempVX = a.vx;
+                const tempVY = a.vy;
+
+                if (!a.dragging) {
+                    a.vx = b.vx * 0.95;
+                    a.vy = b.vy * 0.95;
+                }
+
+                if (!b.dragging) {
+                    b.vx = tempVX * 0.95;
+                    b.vy = tempVY * 0.95;
+                }
+
+                if (Math.abs(a.vx) + Math.abs(a.vy) + Math.abs(b.vx) + Math.abs(b.vy) > 8) {
+                    addBoops(1, true);
+                    if (cannonBought) confettiCannon();
+                }
+            }
+        }
+    }
+
+    // Draw balls and chain lines
+    ballChain.forEach(ball => {
+        ball.el.style.left = ball.x + "px";
+        ball.el.style.top = ball.y + "px";
+
+        const anchorX = ball.homeX + 27;
+        const anchorY = 40;
+
+        const ballCenterX = ball.x + 27;
+        const ballCenterY = ball.y + 27;
+
+        const dx = ballCenterX - anchorX;
+        const dy = ballCenterY - anchorY;
+
+        const length = Math.sqrt(dx * dx + dy * dy);
+        const angle = Math.atan2(dx, dy) * -1;
+
+        ball.line.style.left = anchorX + "px";
+        ball.line.style.top = anchorY + "px";
+        ball.line.style.height = length + "px";
+        ball.line.style.transform = "rotate(" + angle + "rad)";
+    });
+
+    ballChainAnimationId = requestAnimationFrame(animateBallChain);
+}
+
+function removeBallChain() {
+    ballChainBought = false;
+    ballChain = [];
+    ballChainEl.innerHTML = "";
+    ballChainEl.style.display = "none";
+    cameraHelp.style.display = "none";
+
+    if (ballChainAnimationId) {
+        cancelAnimationFrame(ballChainAnimationId);
+        ballChainAnimationId = null;
+    }
+}
+
+buyEffects.onclick = () => {
+    if (spendableBoops >= 1 && !effectsBought) {
+        spendableBoops -= 1;
+        effectsBought = true;
+        text.textContent = "Effects bought!";
+        updateCounter();
+    }
+};
+
+buyHyperBouncing.onclick = () => {
+    if (spendableBoops >= 45 && totalBoops >= 45 && !hyperBouncingBought) {
+        spendableBoops -= 45;
+        createHyperBouncingAnne();
+        text.textContent = "Hyper Bouncy Anne bought! It gives +1 boop every minute.";
+        updateCounter();
+    }
+};
+
+buyBouncing.onclick = () => {
+    if (spendableBoops >= 15 && bouncingAnneCount < maxBouncingAnnes) {
+        spendableBoops -= 15;
+        createBouncingAnne();
+        text.textContent = "Bouncy Anne bought! " + bouncingAnneCount + "/15";
+        updateCounter();
+    }
+};
+
+buyCannon.onclick = () => {
+    if (spendableBoops >= 150 && !cannonBought) {
+        spendableBoops -= 150;
+        cannonBought = true;
+        text.textContent = "Confetti Cannon bought!";
+        updateCounter();
+    }
+};
+
+buyBallChain.onclick = () => {
+    if (spendableBoops >= 250 && !ballChainBought) {
+        spendableBoops -= 250;
+        createBallChain();
+        text.textContent = "Ball Chain bought! Drag an end ball and release it.";
+        updateCounter();
+    }
+};
+
+buyDuplicater.onclick = () => {
+    if (spendableBoops >= 500 && duplicaterLevel < 10) {
+        spendableBoops -= 500;
+        duplicaterLevel++;
+        text.textContent = "Boop Duplicater level " + duplicaterLevel + " bought!";
+        updateCounter();
+    }
+};
+
+buyAutoOne.onclick = () => {
+    if (spendableBoops >= 1500 && totalBoops >= 1500 && autoTier < 1) {
+        spendableBoops -= 1500;
+        autoTier = 1;
+        startAutoBoopers();
+        text.textContent = "Auto Booper Tier 1 bought! +1 boop every 5 seconds.";
+        updateCounter();
+    }
+};
+
+buyAutoTwo.onclick = () => {
+    if (spendableBoops >= 10000 && totalBoops >= 1500 && autoTier < 2) {
+        spendableBoops -= 10000;
+        autoTier = 2;
+        startAutoBoopers();
+        text.textContent = "Auto Booper Tier 2 bought! +1 boop every 1 second.";
+        updateCounter();
+    }
+};
+
+buyAutoThree.onclick = () => {
+    if (spendableBoops >= 50000 && totalBoops >= 1500 && autoTier < 3) {
+        spendableBoops -= 50000;
+        autoTier = 3;
+        startAutoBoopers();
+        text.textContent = "Auto Booper Tier 3 bought! +1 boop per tick.";
+        updateCounter();
+    }
+};
+
+function startAutoBoopers() {
+    clearAutoBoopers();
+
+    if (autoTier >= 1) {
+        autoOneInterval = setInterval(() => addBoops(1, true), 5000);
+    }
+
+    if (autoTier >= 2) {
+        autoTwoInterval = setInterval(() => addBoops(1, true), 1000);
+    }
+
+    if (autoTier >= 3) {
+        autoThreeInterval = setInterval(() => addBoops(1, true), 50);
+    }
+}
+
+function clearAutoBoopers() {
+    if (autoOneInterval) clearInterval(autoOneInterval);
+    if (autoTwoInterval) clearInterval(autoTwoInterval);
+    if (autoThreeInterval) clearInterval(autoThreeInterval);
+
+    autoOneInterval = null;
+    autoTwoInterval = null;
+    autoThreeInterval = null;
+}
+
+function saveData() {
+    return {
+        totalBoops,
+        spendableBoops,
+        effectsBought,
+        cannonBought,
+        ballChainBought,
+        duplicaterLevel,
+        cheatCodeAdderUnlocked,
+        autoTier,
+        bouncingAnneCount,
+        hyperBouncingBought,
+        cameraX,
+        cameraY,
+        cameraZoom
+    };
+}
+
+let memorySaves = {};
+
+function saveToSlot(slot, data) {
+    const key = "anneBooperSlot" + slot;
+    const saveText = JSON.stringify(data);
+
+    try {
+        localStorage.setItem(key, saveText);
+        return "Saved to slot " + slot + "!";
+    } catch (error) {
+        memorySaves[key] = saveText;
+        return "Saved temporarily to slot " + slot + "! Local storage is blocked.";
+    }
+}
+
+function loadFromSlot(slot) {
+    const key = "anneBooperSlot" + slot;
+
+    try {
+        return localStorage.getItem(key) || memorySaves[key] || null;
+    } catch (error) {
+        return memorySaves[key] || null;
+    }
+}
+
+document.getElementById("saveGame").onclick = () => {
+    text.textContent = saveToSlot(saveSlot.value, saveData());
+};
+
+document.getElementById("loadGame").onclick = () => {
+    const data = loadFromSlot(saveSlot.value);
+
+    if (!data) {
+        text.textContent = "No save in slot " + saveSlot.value + "!";
+        return;
+    }
+
+    try {
+        const save = JSON.parse(data);
+
+        clearAutoBoopers();
+        removeAllBouncyAnnes();
+        removeBallChain();
+
+        totalBoops = Number(save.totalBoops) || 0;
+        spendableBoops = Number(save.spendableBoops) || 0;
+        effectsBought = Boolean(save.effectsBought);
+        cannonBought = Boolean(save.cannonBought);
+        ballChainBought = false;
+        duplicaterLevel = Number(save.duplicaterLevel) || 0;
+        cheatCodeAdderUnlocked = Boolean(save.cheatCodeAdderUnlocked);
+        autoTier = Number(save.autoTier) || 0;
+
+        cameraX = Number(save.cameraX) || 0;
+        cameraY = Number(save.cameraY) || 0;
+        cameraZoom = Number(save.cameraZoom) || 1;
+        updateCamera();
+
+        const savedBouncyCount = Math.min(Number(save.bouncingAnneCount) || 0, maxBouncingAnnes);
+        const savedHyper = Boolean(save.hyperBouncingBought);
+
+        for (let i = 0; i < savedBouncyCount; i++) {
+            createBouncingAnne();
+        }
+
+        if (savedHyper) {
+            hyperBouncingBought = false;
+            createHyperBouncingAnne();
+        }
+
+        if (Boolean(save.ballChainBought)) {
+            createBallChain();
+        }
+
+        if (totalBoops >= 100000 && totalBoops < 125000) {
+            document.body.classList.add("cursed");
+        } else {
+            document.body.classList.remove("cursed");
+        }
+
+        startAutoBoopers();
+
+        text.textContent = "Loaded slot " + saveSlot.value + "!";
+        updateCounter();
+    } catch (error) {
+        text.textContent = "Load failed. Save data may be broken.";
+    }
+};
+
+function fullResetAfterBlueScreen() {
+    totalBoops = 0;
+    spendableBoops = 0;
+    effectsBought = false;
+    cannonBought = false;
+    ballChainBought = false;
+    duplicaterLevel = 0;
+    autoTier = 0;
+    bouncingAnneCount = 0;
+    hyperBouncingBought = false;
+    cheatCodeAdderUnlocked = true;
+
+    clearAutoBoopers();
+    removeAllBouncyAnnes();
+    removeBallChain();
+    stopHyperIncome();
+
+    document.body.classList.remove("cursed");
+    document.getElementById("blueScreen").style.display = "none";
+
+    resetting = false;
+    text.textContent = "Game reset... but Cheat Code Adder unlocked.";
+    updateCounter();
+}
+
+function triggerBlueScreenReset() {
+    if (resetting) return;
+
+    resetting = true;
+    document.getElementById("blueScreen").style.display = "block";
+    clearAutoBoopers();
+    stopHyperIncome();
+
+    setTimeout(fullResetAfterBlueScreen, 4000);
+}
+
+document.getElementById("useCheat").onclick = () => {
+    const code = document.getElementById("cheatInput").value.trim().toLowerCase();
+
+    if (code === "psych") {
+        totalBoops += 1000;
+        spendableBoops += 1000;
+        text.textContent = "Cheat accepted: +1000 boops!";
+    } else if (code === "pimple") {
+        totalBoops += 10000;
+        spendableBoops += 10000;
+        text.textContent = "Cheat accepted: acne power +10000 boops!";
+    } else if (code === "cursed") {
+        totalBoops = 100000;
+        spendableBoops += 5000;
+        document.body.classList.add("cursed");
+        text.textContent = "Cursed mode activated.";
+    } else if (code === "shop") {
+        totalBoops = Math.max(totalBoops, 75);
+        spendableBoops += 75;
+        text.textContent = "Shop unlocked by cheat.";
+    } else if (code === "rich") {
+        totalBoops += 50000;
+        spendableBoops += 50000;
+        text.textContent = "You are now rich.";
+    } else if (code === "max") {
+        duplicaterLevel = 10;
+        text.textContent = "Duplicater MAXED.";
+    } else if (code === "confetti" || code === "cannon") {
+        cannonBought = true;
+        text.textContent = "Confetti Cannon unlocked.";
+    } else if (code === "lag") {
+        for (let i = 0; i < 200; i++) confettiCannon();
+        text.textContent = "You broke reality.";
+    } else if (code === "reset") {
+        totalBoops = 0;
+        spendableBoops = 0;
+        effectsBought = false;
+        cannonBought = false;
+        duplicaterLevel = 0;
+        autoTier = 0;
+        hyperBouncingBought = false;
+        clearAutoBoopers();
+        removeAllBouncyAnnes();
+        removeBallChain();
+        document.body.classList.remove("cursed");
+        text.textContent = "Hard reset.";
+    } else if (code === "boopgod") {
+        totalBoops += 1000000;
+        spendableBoops += 1000000;
+        duplicaterLevel = 10;
+        autoTier = 3;
+        startAutoBoopers();
+        text.textContent = "You ascended.";
+    } else if (code === "free") {
+        effectsBought = true;
+        cannonBought = true;
+
+        while (bouncingAnneCount < maxBouncingAnnes) {
+            createBouncingAnne();
+        }
+
+        if (!hyperBouncingBought) {
+            createHyperBouncingAnne();
+        }
+
+        if (!ballChainBought) {
+            createBallChain();
+        }
+
+        text.textContent = "Everything unlocked.";
+    } else if (code === "zoom") {
+        bouncingAnnes.forEach(anne => {
+            anne.dx *= 2;
+            anne.dy *= 2;
+        });
+
+        if (hyperBouncingAnne) {
+            hyperBouncingAnne.dx *= 2;
+            hyperBouncingAnne.dy *= 2;
+        }
+
+        text.textContent = "Bouncy speed doubled!";
+    } else if (code === "slow") {
+        bouncingAnnes.forEach(anne => {
+            anne.dx = anne.dx < 0 ? -1 : 1;
+            anne.dy = anne.dy < 0 ? -1 : 1;
+        });
+
+        if (hyperBouncingAnne) {
+            hyperBouncingAnne.dx = hyperBouncingAnne.dx < 0 ? -2 : 2;
+            hyperBouncingAnne.dy = hyperBouncingAnne.dy < 0 ? -2 : 2;
+        }
+
+        text.textContent = "Everything slowed down...";
+    } else if (code === "particles" || code === "effects") {
+        effectsBought = true;
+        for (let i = 0; i < 30; i++) {
+            showParticles(Math.random() * window.innerWidth, Math.random() * window.innerHeight);
+        }
+        text.textContent = "Effects unlocked.";
+    } else if (code === "glitch") {
+        document.body.classList.add("cursed");
+        text.textContent = "GLITCH MODE ENABLED";
+    } else if (code === "calm") {
+        document.body.classList.remove("cursed");
+        text.textContent = "Everything feels normal again.";
+    } else if (code === "auto1") {
+        totalBoops = Math.max(totalBoops, 1500);
+        spendableBoops += 1500;
+        autoTier = Math.max(autoTier, 1);
+        startAutoBoopers();
+        text.textContent = "Auto Tier 1 unlocked by cheat.";
+    } else if (code === "auto2") {
+        totalBoops = Math.max(totalBoops, 10000);
+        spendableBoops += 10000;
+        autoTier = Math.max(autoTier, 2);
+        startAutoBoopers();
+        text.textContent = "Auto Tier 2 unlocked by cheat.";
+    } else if (code === "auto3") {
+        totalBoops = Math.max(totalBoops, 50000);
+        spendableBoops += 50000;
+        autoTier = 3;
+        startAutoBoopers();
+        text.textContent = "Auto Tier 3 unlocked by cheat.";
+    } else if (code === "stopauto") {
+        autoTier = 0;
+        clearAutoBoopers();
+        text.textContent = "Auto boopers stopped.";
+    } else if (code === "hyper") {
+        totalBoops = Math.max(totalBoops, 45);
+        spendableBoops += 45;
+        if (!hyperBouncingBought) createHyperBouncingAnne();
+        text.textContent = "Hyper Bouncy Anne unlocked by cheat.";
+    } else if (code === "bouncy") {
+        if (bouncingAnneCount < maxBouncingAnnes) {
+            createBouncingAnne();
+            text.textContent = "Free Bouncy Anne spawned.";
+        } else {
+            text.textContent = "You already have 15 Bouncy Annes.";
+        }
+    } else if (code === "bouncymax") {
+        while (bouncingAnneCount < maxBouncingAnnes) {
+            createBouncingAnne();
+        }
+        text.textContent = "Max Bouncy Annes unlocked.";
+    } else if (code === "ballchain") {
+        totalBoops = Math.max(totalBoops, 250);
+        spendableBoops += 250;
+        if (!ballChainBought) createBallChain();
+        text.textContent = "Ball Chain unlocked by cheat.";
+    } else if (code === "unlockcheats") {
+        cheatCodeAdderUnlocked = true;
+        text.textContent = "Cheat Code Adder unlocked.";
+    } else {
+        text.textContent = "Invalid cheat code.";
+    }
+
+    if (totalBoops >= 125000) {
+        triggerBlueScreenReset();
+    } else {
+        updateCounter();
+    }
+};
+
+setInterval(() => {
+    if (!resetting && Date.now() - lastClickTime >= 60000) {
+        text.textContent = "Anne interrupts: " + messages[Math.floor(Math.random() * messages.length)];
+        lastClickTime = Date.now();
+    }
+}, 5000);
+
+updateCamera();
+updateCounter();
+</script>
+
+</body>
+</html>
