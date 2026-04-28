@@ -1455,6 +1455,77 @@ setInterval(() => {
 
 updateCamera();
 updateCounter();
+<!-- 🔐 Hyper Anne Unlock System -->
+<div id="hyperCodeBox" style="
+    display:none;
+    position:fixed;
+    bottom:12px;
+    right:12px;
+    background:rgba(255,255,255,0.92);
+    padding:12px;
+    border-radius:16px;
+    box-shadow:0 0 18px cyan;
+    z-index:200;
+    text-align:center;
+">
+    <h3 style="margin:0 0 8px 0;">⚡ Hyper Anne Code</h3>
+    <input id="hyperCodeInput" placeholder="Enter Hyper Anne code"
+        style="padding:8px;border-radius:8px;border:2px solid hotpink;margin:4px;">
+    <br>
+    <button id="submitHyperCode"
+        style="margin:4px;padding:8px 11px;border:none;border-radius:10px;background:hotpink;color:white;font-weight:bold;cursor:pointer;">
+        Unlock
+    </button>
+</div>
+
+<script>
+/* ===== SAFE GLOBAL FLAGS (won’t overwrite existing ones) ===== */
+if (typeof imageChangerUnlocked === "undefined") {
+    var imageChangerUnlocked = false;
+}
+if (typeof customMessagesUnlocked === "undefined") {
+    var customMessagesUnlocked = false;
+}
+
+/* ===== ELEMENTS ===== */
+const hyperCodeBox = document.getElementById("hyperCodeBox");
+const hyperCodeInput = document.getElementById("hyperCodeInput");
+const submitHyperCode = document.getElementById("submitHyperCode");
+
+/* ===== SHOW BOX WHEN HYPER ANNE EXISTS ===== */
+setInterval(() => {
+    if (typeof hyperBouncingBought !== "undefined" && hyperBouncingBought) {
+        hyperCodeBox.style.display = "block";
+    }
+}, 500);
+
+/* ===== CODE LOGIC ===== */
+submitHyperCode.onclick = () => {
+    const code = hyperCodeInput.value.trim();
+
+    if (code === "Hwi7k%") {
+        if (typeof cheatCodeAdderUnlocked !== "undefined") {
+            cheatCodeAdderUnlocked = true;
+        }
+
+        imageChangerUnlocked = true;
+        customMessagesUnlocked = true;
+
+        if (typeof text !== "undefined") {
+            text.textContent = "Hyper code accepted! New powers unlocked.";
+        }
+
+        hyperCodeBox.style.display = "none";
+
+        if (typeof updateCounter === "function") {
+            updateCounter();
+        }
+    } else {
+        if (typeof text !== "undefined") {
+            text.textContent = "Wrong Hyper Anne code.";
+        }
+    }
+};
 </script>
 
 </body>
