@@ -882,6 +882,62 @@ setInterval(() => {
 
 updateCounter();
 
-</script>
+<script>
+/* ===== MOVE CHEAT BUTTON NEXT TO MESSAGE ===== */
+
+(function () {
+    const textBox = document.getElementById("text");
+    const mainUI = document.getElementById("mainUI");
+
+    if (!textBox || !mainUI) return;
+
+    let cheatBtn = document.getElementById("cheatSideButton");
+
+    if (!cheatBtn) {
+        cheatBtn = document.createElement("button");
+        cheatBtn.id = "cheatSideButton";
+        cheatBtn.textContent = "🎁 Cheat Codes";
+        cheatBtn.style.display = "none";
+        cheatBtn.style.marginLeft = "8px";
+
+        textBox.insertAdjacentElement("afterend", cheatBtn);
+    }
+
+    cheatBtn.onclick = function (event) {
+        event.stopPropagation();
+
+        const cheatBox = document.getElementById("cheatBox");
+        const cheatInput = document.getElementById("cheatInput");
+
+        if (cheatBox) cheatBox.style.display = "block";
+        if (cheatInput) cheatInput.focus();
+
+        textBox.textContent = "Enter a cheat code.";
+    };
+
+    setInterval(function () {
+        cheatBtn.style.display = cheatCodeAdderUnlocked ? "inline-block" : "none";
+    }, 300);
+})();
+<style>
+#mainUI {
+    justify-content: flex-start !important;
+    overflow-y: auto !important;
+    padding-top: 20px !important;
+    padding-bottom: 180px !important;
+}
+
+#hyperCodeBox {
+    position: fixed !important;
+    top: 12px !important;
+    right: 12px !important;
+    bottom: auto !important;
+    z-index: 99999 !important;
+}
+
+#cheatBox {
+    z-index: 99999 !important;
+}
+</style>
 </body>
 </html>
