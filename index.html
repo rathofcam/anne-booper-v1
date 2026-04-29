@@ -23,6 +23,7 @@ body {
 
 .cursed {
     animation: cursedBg 0.25s infinite;
+    filter: contrast(1.4) saturate(2);
 }
 
 @keyframes cursedBg {
@@ -33,40 +34,65 @@ body {
     100% { background: hotpink; }
 }
 
-/* ===== UI ===== */
+/* ===== MAIN UI ===== */
 
 #mainUI {
     position: fixed;
     inset: 0;
     display: flex;
-    justify-content: center;
     align-items: center;
     flex-direction: column;
+    overflow-y: auto;
+    padding-top: 20px;
+    padding-bottom: 220px;
+    z-index: 20;
 }
 
-img {
+#anne {
     width: 420px;
+    max-width: 85vw;
     border-radius: 20px;
     cursor: pointer;
     box-shadow: 0 0 25px hotpink;
+    transition: transform 0.2s ease;
+}
+
+#anne:hover {
+    transform: scale(1.05);
+}
+
+.boop {
+    animation: boopAnim 0.25s ease;
+}
+
+@keyframes boopAnim {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15) rotate(4deg); }
+    100% { transform: scale(1); }
 }
 
 #text {
     margin-top: 15px;
     background: white;
-    padding: 10px;
+    padding: 10px 14px;
     border-radius: 12px;
     font-weight: bold;
+    text-align: center;
+    max-width: 520px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.15);
 }
 
 #counter {
     margin-top: 10px;
-    background: rgba(255,255,255,0.8);
-    padding: 8px;
+    background: rgba(255,255,255,0.85);
+    padding: 8px 12px;
     border-radius: 10px;
+    font-weight: bold;
+    text-align: center;
+    max-width: 760px;
 }
 
-/* ===== SHOP ===== */
+/* ===== SHOP / SAVE / CHEATS ===== */
 
 #shop, #saveBox, #cheatBox {
     display: none;
@@ -75,11 +101,14 @@ img {
     padding: 12px;
     border-radius: 14px;
     box-shadow: 0 0 14px hotpink;
+    text-align: center;
+    z-index: 50;
+    max-width: 720px;
 }
 
 button {
     margin: 4px;
-    padding: 8px;
+    padding: 8px 10px;
     border-radius: 10px;
     border: none;
     background: hotpink;
@@ -90,44 +119,75 @@ button {
 
 button:disabled {
     background: gray;
+    cursor: not-allowed;
 }
 
-/* ===== ANNES ===== */
+input, select {
+    padding: 7px;
+    border-radius: 8px;
+    border: 2px solid hotpink;
+    margin: 4px;
+}
+
+/* ===== BOUNCY ANNES ===== */
 
 .bouncingAnne {
     position: absolute;
     width: 130px;
+    border-radius: 14px;
+    box-shadow: 0 0 20px deeppink;
+    cursor: pointer;
+    z-index: 5;
 }
 
 .hyperBouncingAnne {
     position: absolute;
     width: 150px;
+    border-radius: 16px;
+    box-shadow: 0 0 35px cyan, 0 0 18px hotpink;
+    cursor: pointer;
+    z-index: 6;
+    filter: saturate(1.5);
 }
 
 /* ===== PARTICLES ===== */
 
-.particle {
+.particle, .floating {
     position: absolute;
+    font-size: 24px;
+    pointer-events: none;
     animation: floatUp 1s forwards;
+    z-index: 999;
 }
 
 @keyframes floatUp {
-    to {
-        transform: translateY(-80px);
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
         opacity: 0;
+        transform: translateY(-80px) scale(1.5) rotate(20deg);
     }
 }
 
-/* ===== HYPER BOX ===== */
+/* ===== HYPER CODE BOX ===== */
 
 #hyperCodeBox {
     display: none;
     position: fixed;
-    bottom: 10px;
-    right: 10px;
+    top: 12px;
+    right: 12px;
     background: white;
     padding: 10px;
     border-radius: 12px;
+    box-shadow: 0 0 15px cyan;
+    z-index: 99999;
+    text-align: center;
+}
+
+#hyperCodeBox h3 {
+    margin: 0 0 8px 0;
 }
 
 /* ===== BLUE SCREEN ===== */
@@ -139,6 +199,9 @@ button:disabled {
     background: #0078d7;
     color: white;
     padding: 40px;
+    z-index: 999999;
+    font-family: Consolas, monospace;
+    font-size: 22px;
 }
 </style>
 </head>
@@ -147,61 +210,83 @@ button:disabled {
 
 <div id="blueScreen">
     <h1>:(</h1>
-    <p>Anne Booper crashed.</p>
+    <p>Your Anne Booper ran into a problem and needs to restart.</p>
+    <p>Error: TOO_MANY_BOOPS_DETECTED</p>
+    <p>Resetting game...</p>
 </div>
 
 <div id="mainUI">
 
-    <img id="anne" src="Anne.png">
+    <img id="anne" src="Anne.png" alt="Anne Booper">
+
     <div id="text">Click Anne 👆</div>
-    <div id="counter">Boops: 0</div>
+    <div id="counter">Boops: 0 | Spendable: 0 | Per Click: 1</div>
 
     <div id="shop">
-        <h3>🛒 Shop</h3>
+        <h3>🛒 Anne Shop</h3>
 
         <button id="buyBouncing">Bouncy Anne (15)</button>
         <button id="buyHyper">Hyper Anne (45)</button>
-
-        <!-- UPDATED PRICES -->
         <button id="buyCannon">Confetti (50)</button>
         <button id="buyDuplicater">Duplicater (150)</button>
-
     </div>
 
     <div id="saveBox">
+        <h3>💾 Save Slots</h3>
         <select id="saveSlot"></select>
         <button id="saveGame">Save</button>
         <button id="loadGame">Load</button>
     </div>
 
     <div id="cheatBox">
-        <input id="cheatInput">
+        <h3>🎁 Cheat Codes</h3>
+        <input id="cheatInput" placeholder="Enter cheat code">
         <button id="useCheat">Use Code</button>
     </div>
 
 </div>
 
 <div id="hyperCodeBox">
-    <input id="hyperCodeInput" placeholder="Enter code">
+    <h3>⚡ Hyper Anne Code</h3>
+    <input id="hyperCodeInput" placeholder="Enter secret code">
     <button id="submitHyperCode">Unlock</button>
 </div>
 
 <script>
-
 /* ===== MESSAGES ===== */
 
 const messages = [
     "Psych time!",
+    "Psych while pimple popping.",
     "I love to pop my pimples",
     "Emergency dopamine requested",
     "Anne.exe stopped working",
+    "How’s your poop today?",
+    "Gus, don’t be ridiculous",
+    "I’ve heard it both ways",
+    "This boop has consequences",
     "You’re addicted now",
     "Anne is multiplying",
     "Click faster",
     "The shop is alive",
     "Auto boopers incoming",
     "You need upgrades",
-    "This is only the beginning"
+    "This is only the beginning",
+    "Anne is judging your clicks",
+    "You missed a boop. She noticed.",
+    "This feels like a bad financial decision",
+    "The duplicater hungers.",
+    "Confetti is now affordable.",
+    "Anne demands more boops.",
+    "Boop economy rising.",
+    "This game is becoming suspicious.",
+    "Hyper Anne knows the code.",
+    "Bouncy Annes are unionizing.",
+    "Manual boops are still superior.",
+    "The shop whispers: spend it.",
+    "You are becoming too powerful.",
+    "Anne has entered business mode.",
+    "Did you chart that or are you living dangerously?"
 ];/* ===== STATE ===== */
 
 let totalBoops = 0;
@@ -233,6 +318,16 @@ let autoThreeInterval = null;
 let resetting = false;
 let lastClickTime = Date.now();
 
+/* ===== PRICES ===== */
+
+const PRICE_BOUNCY = 15;
+const PRICE_HYPER = 45;
+const PRICE_CONFETTI = 50;
+const PRICE_DUPLICATER = 150;
+const PRICE_AUTO_ONE = 1500;
+const PRICE_AUTO_TWO = 10000;
+const PRICE_AUTO_THREE = 50000;
+
 /* ===== ELEMENTS ===== */
 
 const img = document.getElementById("anne");
@@ -259,13 +354,6 @@ const hyperCodeBox = document.getElementById("hyperCodeBox");
 const hyperCodeInput = document.getElementById("hyperCodeInput");
 const submitHyperCode = document.getElementById("submitHyperCode");
 
-/* ===== PRICES ===== */
-
-const PRICE_BOUNCY = 15;
-const PRICE_HYPER = 45;
-const PRICE_CONFETTI = 50;
-const PRICE_DUPLICATER = 150;
-
 /* ===== SAVE SLOTS ===== */
 
 for (let i = 1; i <= 50; i++) {
@@ -274,6 +362,38 @@ for (let i = 1; i <= 50; i++) {
     option.textContent = "Save Slot " + i;
     saveSlot.appendChild(option);
 }
+
+/* ===== AUTO SHOP BUTTONS CREATED SAFELY ===== */
+
+const autoOneBtn = document.createElement("button");
+autoOneBtn.id = "buyAutoOne";
+autoOneBtn.textContent = "Auto Booper I (1500)";
+shop.appendChild(autoOneBtn);
+
+const autoTwoBtn = document.createElement("button");
+autoTwoBtn.id = "buyAutoTwo";
+autoTwoBtn.textContent = "Auto Booper II (10000)";
+shop.appendChild(autoTwoBtn);
+
+const autoThreeBtn = document.createElement("button");
+autoThreeBtn.id = "buyAutoThree";
+autoThreeBtn.textContent = "Auto Booper III (50000)";
+shop.appendChild(autoThreeBtn);
+
+/* ===== CHEAT BUTTON NEXT TO MESSAGE ===== */
+
+const cheatSideButton = document.createElement("button");
+cheatSideButton.id = "cheatSideButton";
+cheatSideButton.textContent = "🎁 Cheat Codes";
+cheatSideButton.style.display = "none";
+text.insertAdjacentElement("afterend", cheatSideButton);
+
+cheatSideButton.onclick = event => {
+    event.stopPropagation();
+    cheatBox.style.display = "block";
+    cheatInput.focus();
+    text.textContent = "Enter a cheat code.";
+};
 
 /* ===== COUNTER / UI ===== */
 
@@ -289,17 +409,28 @@ function updateCounter() {
         "Boops: " + Math.floor(totalBoops) +
         " | Spendable: " + Math.floor(spendableBoops) +
         " | Per Click: " + perClick +
+        " | Duplicater: " + duplicaterLevel + "/10" +
         " | Bouncy Annes: " + bouncingAnneCount + "/15" +
         " | Auto: " + autoText;
 
     shop.style.display = totalBoops >= 75 ? "block" : "none";
     saveBox.style.display = totalBoops >= 75 ? "block" : "none";
-    cheatBox.style.display = cheatCodeAdderUnlocked ? "block" : "none";
+
+    if (cheatCodeAdderUnlocked) {
+        cheatBox.style.display = "block";
+        cheatSideButton.style.display = "inline-block";
+    } else {
+        cheatSideButton.style.display = "none";
+    }
 
     buyBouncing.disabled = spendableBoops < PRICE_BOUNCY || bouncingAnneCount >= maxBouncingAnnes;
     buyHyper.disabled = spendableBoops < PRICE_HYPER || totalBoops < PRICE_HYPER || hyperBouncingBought;
     buyCannon.disabled = spendableBoops < PRICE_CONFETTI || cannonBought;
     buyDuplicater.disabled = spendableBoops < PRICE_DUPLICATER || duplicaterLevel >= 10;
+
+    autoOneBtn.disabled = spendableBoops < PRICE_AUTO_ONE || autoTier >= 1;
+    autoTwoBtn.disabled = spendableBoops < PRICE_AUTO_TWO || autoTier >= 2;
+    autoThreeBtn.disabled = spendableBoops < PRICE_AUTO_THREE || autoTier >= 3;
 }
 
 /* ===== PARTICLES ===== */
@@ -375,13 +506,16 @@ function boop(event) {
     }
 
     img.classList.add("boop");
-    setTimeout(() => img.classList.remove("boop"), 300);
+    setTimeout(() => img.classList.remove("boop"), 250);
 
     const x = event.clientX || window.innerWidth / 2;
     const y = event.clientY || window.innerHeight / 2;
 
     showParticles(x, y);
-    if (cannonBought) confettiCannon();
+
+    if (cannonBought) {
+        confettiCannon();
+    }
 
     updateCounter();
 }
@@ -393,7 +527,9 @@ img.addEventListener("click", event => {
 
 /* ===== HYPER CODE ===== */
 
-submitHyperCode.onclick = () => {
+submitHyperCode.onclick = event => {
+    event.stopPropagation();
+
     const code = hyperCodeInput.value.trim();
 
     if (code === "Hwi7k%") {
@@ -412,6 +548,7 @@ submitHyperCode.onclick = () => {
 };
 
 hyperCodeBox.addEventListener("click", event => event.stopPropagation());
+hyperCodeBox.addEventListener("pointerdown", event => event.stopPropagation());
 hyperCodeInput.addEventListener("click", event => event.stopPropagation());
 hyperCodeInput.addEventListener("pointerdown", event => event.stopPropagation());/* ===== BOUNCY ANNES ===== */
 
@@ -422,8 +559,8 @@ function createBouncingAnne() {
         el: document.createElement("img"),
         x: Math.random() * (window.innerWidth - 130),
         y: Math.random() * (window.innerHeight - 130),
-        dx: Math.random() > 0.5 ? 3 : -3,
-        dy: Math.random() > 0.5 ? 3 : -3,
+        dx: (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 2),
+        dy: (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 2),
         size: 130
     };
 
@@ -466,8 +603,10 @@ function createHyperAnne() {
     /* DOES NOT BOOP */
     hyperBouncingAnne.el.addEventListener("click", e => {
         e.stopPropagation();
+
         hyperCodeBox.style.display = "block";
         hyperCodeInput.focus();
+
         text.textContent = "Enter the secret code.";
     });
 
@@ -478,7 +617,7 @@ function createHyperAnne() {
     updateCounter();
 }
 
-/* ===== REMOVE ALL ===== */
+/* ===== REMOVE ALL ANNES ===== */
 
 function removeAllAnnes() {
     bouncingAnnes.forEach(a => a.el.remove());
@@ -512,23 +651,25 @@ function animateAnnes() {
     const all = [...bouncingAnnes];
     if (hyperBouncingAnne) all.push(hyperBouncingAnne);
 
-    /* MOVE */
+    /* MOVE + WALL COLLISION */
     all.forEach(a => {
         a.x += a.dx;
         a.y += a.dy;
 
         if (a.x <= 0 || a.x + a.size >= window.innerWidth) {
             a.dx *= -1;
+            a.x = Math.max(0, Math.min(a.x, window.innerWidth - a.size));
             if (cannonBought) confettiCannon();
         }
 
         if (a.y <= 0 || a.y + a.size >= window.innerHeight) {
             a.dy *= -1;
+            a.y = Math.max(0, Math.min(a.y, window.innerHeight - a.size));
             if (cannonBought) confettiCannon();
         }
     });
 
-    /* COLLISIONS */
+    /* COLLISIONS (STABLE) */
     for (let i = 0; i < all.length; i++) {
         for (let j = i + 1; j < all.length; j++) {
             const a = all[i];
@@ -538,27 +679,34 @@ function animateAnnes() {
             const dy = (b.y + b.size / 2) - (a.y + a.size / 2);
             const dist = Math.sqrt(dx * dx + dy * dy);
 
-            if (dist < (a.size / 2 + b.size / 2) && dist > 0) {
+            const minDist = (a.size / 2 + b.size / 2);
+
+            if (dist < minDist && dist > 0) {
                 const nx = dx / dist;
-                const overlap = (a.size / 2 + b.size / 2) - dist;
+                const ny = dy / dist;
+
+                const overlap = minDist - dist;
 
                 a.x -= nx * overlap / 2;
+                a.y -= ny * overlap / 2;
                 b.x += nx * overlap / 2;
+                b.y += ny * overlap / 2;
 
-                const tempX = a.dx;
-                const tempY = a.dy;
+                /* velocity swap */
+                const tempDX = a.dx;
+                const tempDY = a.dy;
 
                 a.dx = b.dx;
                 a.dy = b.dy;
-                b.dx = tempX;
-                b.dy = tempY;
+                b.dx = tempDX;
+                b.dy = tempDY;
 
                 if (cannonBought) confettiCannon();
             }
         }
     }
 
-    /* APPLY */
+    /* APPLY POSITIONS */
     all.forEach(a => {
         a.el.style.left = a.x + "px";
         a.el.style.top = a.y + "px";
@@ -571,14 +719,14 @@ function animateAnnes() {
     }
 }
 
-/* ===== HYPER INCOME ===== */
+/* ===== HYPER PASSIVE BOOPS ===== */
 
 function startHyperIncome() {
     stopHyperIncome();
 
     hyperInterval = setInterval(() => {
         addBoops(1, true);
-    }, 60000);
+    }, 60000); // 1 boop per minute
 }
 
 function stopHyperIncome() {
@@ -594,11 +742,9 @@ function startAutoBoopers() {
     if (autoTier >= 1) {
         autoOneInterval = setInterval(() => addBoops(1, true), 5000);
     }
-
     if (autoTier >= 2) {
         autoTwoInterval = setInterval(() => addBoops(1, true), 1000);
     }
-
     if (autoTier >= 3) {
         autoThreeInterval = setInterval(() => addBoops(1, true), 50);
     }
@@ -614,7 +760,7 @@ function clearAutoBoopers() {
     autoThreeInterval = null;
 }
 
-/* ===== SHOP BUTTONS (UPDATED PRICES) ===== */
+/* ===== SHOP BUTTONS ===== */
 
 buyBouncing.onclick = () => {
     if (spendableBoops >= PRICE_BOUNCY && bouncingAnneCount < maxBouncingAnnes) {
@@ -652,23 +798,11 @@ buyDuplicater.onclick = () => {
     }
 };
 
-/* ===== AUTO SHOP BUTTONS ===== */
-
-const autoOneBtn = document.createElement("button");
-autoOneBtn.textContent = "Auto Booper I (1500)";
-shop.appendChild(autoOneBtn);
-
-const autoTwoBtn = document.createElement("button");
-autoTwoBtn.textContent = "Auto Booper II (10000)";
-shop.appendChild(autoTwoBtn);
-
-const autoThreeBtn = document.createElement("button");
-autoThreeBtn.textContent = "Auto Booper III (50000)";
-shop.appendChild(autoThreeBtn);
+/* ===== AUTO BUTTONS ===== */
 
 autoOneBtn.onclick = () => {
-    if (spendableBoops >= 1500 && autoTier < 1) {
-        spendableBoops -= 1500;
+    if (spendableBoops >= PRICE_AUTO_ONE && autoTier < 1) {
+        spendableBoops -= PRICE_AUTO_ONE;
         autoTier = 1;
         startAutoBoopers();
         text.textContent = "Auto Tier 1 unlocked!";
@@ -677,8 +811,8 @@ autoOneBtn.onclick = () => {
 };
 
 autoTwoBtn.onclick = () => {
-    if (spendableBoops >= 10000 && autoTier < 2) {
-        spendableBoops -= 10000;
+    if (spendableBoops >= PRICE_AUTO_TWO && autoTier < 2) {
+        spendableBoops -= PRICE_AUTO_TWO;
         autoTier = 2;
         startAutoBoopers();
         text.textContent = "Auto Tier 2 unlocked!";
@@ -687,8 +821,8 @@ autoTwoBtn.onclick = () => {
 };
 
 autoThreeBtn.onclick = () => {
-    if (spendableBoops >= 50000 && autoTier < 3) {
-        spendableBoops -= 50000;
+    if (spendableBoops >= PRICE_AUTO_THREE && autoTier < 3) {
+        spendableBoops -= PRICE_AUTO_THREE;
         autoTier = 3;
         startAutoBoopers();
         text.textContent = "Auto Tier 3 unlocked!";
@@ -723,7 +857,7 @@ function saveGame() {
         text.textContent = "Saved!";
     } catch {
         memorySaves[key] = data;
-        text.textContent = "Saved (temp)";
+        text.textContent = "Saved (temporary)";
     }
 }
 
@@ -733,7 +867,7 @@ function loadGame() {
     let data = null;
 
     try {
-        data = localStorage.getItem(key);
+        data = localStorage.getItem(key) || memorySaves[key];
     } catch {
         data = memorySaves[key];
     }
@@ -775,10 +909,12 @@ loadGameBtn.onclick = loadGame;
 
 /* ===== CHEAT CODES ===== */
 
-useCheat.onclick = () => {
+useCheat.onclick = event => {
+    event.stopPropagation();
+
     const code = cheatInput.value.trim().toLowerCase();
 
-    const give = (n) => {
+    const give = n => {
         totalBoops += n;
         spendableBoops += n;
     };
@@ -787,6 +923,7 @@ useCheat.onclick = () => {
         case "psych": give(1000); break;
         case "pimple": give(10000); break;
         case "rich": give(50000); break;
+
         case "boopgod":
             give(1000000);
             duplicaterLevel = 10;
@@ -794,9 +931,13 @@ useCheat.onclick = () => {
             startAutoBoopers();
             break;
 
-        case "max": duplicaterLevel = 10; break;
+        case "max":
+            duplicaterLevel = 10;
+            break;
 
-        case "bouncy": createBouncingAnne(); break;
+        case "bouncy":
+            createBouncingAnne();
+            break;
 
         case "bouncymax":
             while (bouncingAnneCount < maxBouncingAnnes) createBouncingAnne();
@@ -806,13 +947,29 @@ useCheat.onclick = () => {
             if (!hyperBouncingBought) createHyperAnne();
             break;
 
-        case "effects": effectsBought = true; break;
-        case "cannon":
-        case "confetti": cannonBought = true; break;
+        case "effects":
+            effectsBought = true;
+            break;
 
-        case "auto1": autoTier = 1; startAutoBoopers(); break;
-        case "auto2": autoTier = 2; startAutoBoopers(); break;
-        case "auto3": autoTier = 3; startAutoBoopers(); break;
+        case "cannon":
+        case "confetti":
+            cannonBought = true;
+            break;
+
+        case "auto1":
+            autoTier = 1;
+            startAutoBoopers();
+            break;
+
+        case "auto2":
+            autoTier = 2;
+            startAutoBoopers();
+            break;
+
+        case "auto3":
+            autoTier = 3;
+            startAutoBoopers();
+            break;
 
         case "free":
             effectsBought = true;
@@ -820,6 +977,7 @@ useCheat.onclick = () => {
             duplicaterLevel = 10;
             autoTier = 3;
             startAutoBoopers();
+
             while (bouncingAnneCount < maxBouncingAnnes) createBouncingAnne();
             if (!hyperBouncingBought) createHyperAnne();
             break;
@@ -830,6 +988,8 @@ useCheat.onclick = () => {
 
         default:
             text.textContent = "Invalid code.";
+            cheatInput.value = "";
+            updateCounter();
             return;
     }
 
@@ -869,7 +1029,17 @@ function triggerBlueScreenReset() {
     }, 4000);
 }
 
-/* ===== IDLE ===== */
+/* ===== PREVENT UI CLICK BUG ===== */
+
+["shop", "saveBox", "cheatBox", "hyperCodeBox"].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    el.addEventListener("click", e => e.stopPropagation());
+    el.addEventListener("pointerdown", e => e.stopPropagation());
+});
+
+/* ===== IDLE MESSAGE ===== */
 
 setInterval(() => {
     if (!resetting && Date.now() - lastClickTime > 60000) {
@@ -882,62 +1052,6 @@ setInterval(() => {
 
 updateCounter();
 
-<script>
-/* ===== MOVE CHEAT BUTTON NEXT TO MESSAGE ===== */
-
-(function () {
-    const textBox = document.getElementById("text");
-    const mainUI = document.getElementById("mainUI");
-
-    if (!textBox || !mainUI) return;
-
-    let cheatBtn = document.getElementById("cheatSideButton");
-
-    if (!cheatBtn) {
-        cheatBtn = document.createElement("button");
-        cheatBtn.id = "cheatSideButton";
-        cheatBtn.textContent = "🎁 Cheat Codes";
-        cheatBtn.style.display = "none";
-        cheatBtn.style.marginLeft = "8px";
-
-        textBox.insertAdjacentElement("afterend", cheatBtn);
-    }
-
-    cheatBtn.onclick = function (event) {
-        event.stopPropagation();
-
-        const cheatBox = document.getElementById("cheatBox");
-        const cheatInput = document.getElementById("cheatInput");
-
-        if (cheatBox) cheatBox.style.display = "block";
-        if (cheatInput) cheatInput.focus();
-
-        textBox.textContent = "Enter a cheat code.";
-    };
-
-    setInterval(function () {
-        cheatBtn.style.display = cheatCodeAdderUnlocked ? "inline-block" : "none";
-    }, 300);
-})();
-<style>
-#mainUI {
-    justify-content: flex-start !important;
-    overflow-y: auto !important;
-    padding-top: 20px !important;
-    padding-bottom: 180px !important;
-}
-
-#hyperCodeBox {
-    position: fixed !important;
-    top: 12px !important;
-    right: 12px !important;
-    bottom: auto !important;
-    z-index: 99999 !important;
-}
-
-#cheatBox {
-    z-index: 99999 !important;
-}
-</style>
+</script>
 </body>
 </html>
