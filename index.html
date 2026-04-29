@@ -9,7 +9,7 @@
 body {
     margin: 0;
     background: linear-gradient(45deg, lavender, pink, lightblue, #fff0f5);
-    background-size: 400% 400%;
+    background-size: 600% 600%;
     animation: bgMove 8s infinite alternate;
     height: 100vh;
     font-family: Arial, sans-serif;
@@ -1565,6 +1565,127 @@ updateCounter();
     /* ===== INIT ===== */
     applyCamera();
 
+})();
+t<script>
+/* ===== CHEAT CODE BUTTON AFTER UNLOCK ===== */
+
+(function () {
+    const cheatBox = document.getElementById("cheatBox");
+    const cheatInput = document.getElementById("cheatInput");
+    const useCheat = document.getElementById("useCheat");
+
+    if (!cheatBox || !cheatInput || !useCheat) return;
+
+    const cheatButton = document.createElement("button");
+    cheatButton.id = "openCheatCodes";
+    cheatButton.textContent = "🎁 Cheat Codes";
+    cheatButton.style.display = "none";
+    cheatButton.onclick = () => {
+        cheatBox.style.display = "block";
+        cheatInput.focus();
+        text.textContent = "Type a cheat code.";
+    };
+
+    document.getElementById("mainUI").appendChild(cheatButton);
+
+    setInterval(() => {
+        cheatButton.style.display = cheatCodeAdderUnlocked ? "inline-block" : "none";
+    }, 500);
+
+    useCheat.onclick = () => {
+        const code = cheatInput.value.trim().toLowerCase();
+
+        if (code === "psych") {
+            totalBoops += 1000;
+            spendableBoops += 1000;
+            text.textContent = "Cheat accepted: +1,000 boops!";
+        } else if (code === "pimple") {
+            totalBoops += 10000;
+            spendableBoops += 10000;
+            text.textContent = "Cheat accepted: +10,000 boops!";
+        } else if (code === "rich") {
+            totalBoops += 50000;
+            spendableBoops += 50000;
+            text.textContent = "Cheat accepted: +50,000 boops!";
+        } else if (code === "boopgod") {
+            totalBoops += 1000000;
+            spendableBoops += 1000000;
+            text.textContent = "Cheat accepted: +1,000,000 boops!";
+        } else if (code === "shop") {
+            totalBoops = Math.max(totalBoops, 75);
+            spendableBoops += 75;
+            text.textContent = "Shop unlocked!";
+        } else if (code === "max") {
+            duplicaterLevel = 10;
+            text.textContent = "Boop Duplicater maxed!";
+        } else if (code === "effects") {
+            effectsBought = true;
+            text.textContent = "Effects unlocked!";
+        } else if (code === "confetti" || code === "cannon") {
+            cannonBought = true;
+            text.textContent = "Confetti Cannon unlocked!";
+        } else if (code === "hyper") {
+            totalBoops = Math.max(totalBoops, 45);
+            spendableBoops += 45;
+            if (!hyperBouncingBought) createHyperBouncingAnne();
+            text.textContent = "Hyper Bouncy Anne unlocked!";
+        } else if (code === "bouncy") {
+            createBouncingAnne();
+            text.textContent = "Free Bouncy Anne spawned!";
+        } else if (code === "bouncymax") {
+            while (bouncingAnneCount < maxBouncingAnnes) {
+                createBouncingAnne();
+            }
+            text.textContent = "Max Bouncy Annes unlocked!";
+        } else if (code === "auto1") {
+            totalBoops = Math.max(totalBoops, 1500);
+            spendableBoops += 1500;
+            autoTier = Math.max(autoTier, 1);
+            startAutoBoopers();
+            text.textContent = "Auto Booper Tier 1 unlocked!";
+        } else if (code === "auto2") {
+            totalBoops = Math.max(totalBoops, 10000);
+            spendableBoops += 10000;
+            autoTier = Math.max(autoTier, 2);
+            startAutoBoopers();
+            text.textContent = "Auto Booper Tier 2 unlocked!";
+        } else if (code === "auto3") {
+            totalBoops = Math.max(totalBoops, 50000);
+            spendableBoops += 50000;
+            autoTier = 3;
+            startAutoBoopers();
+            text.textContent = "Auto Booper Tier 3 unlocked!";
+        } else if (code === "free") {
+            effectsBought = true;
+            cannonBought = true;
+            duplicaterLevel = 10;
+            autoTier = 3;
+            startAutoBoopers();
+
+            while (bouncingAnneCount < maxBouncingAnnes) {
+                createBouncingAnne();
+            }
+
+            if (!hyperBouncingBought) createHyperBouncingAnne();
+
+            text.textContent = "Everything unlocked!";
+        } else if (code === "stopauto") {
+            autoTier = 0;
+            clearAutoBoopers();
+            text.textContent = "Auto boopers stopped.";
+        } else if (code === "calm") {
+            document.body.classList.remove("cursed");
+            text.textContent = "Cursed mode removed.";
+        } else {
+            text.textContent = "Invalid cheat code.";
+        }
+
+        cheatInput.value = "";
+
+        if (typeof updateCounter === "function") {
+            updateCounter();
+        }
+    };
 })();
 </script>
 </body>
