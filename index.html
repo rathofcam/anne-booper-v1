@@ -21,21 +21,6 @@ body {
     100% { background-position: right; }
 }
 
-.cursed {
-    animation: cursedBg 0.25s infinite;
-    filter: contrast(1.4) saturate(2);
-}
-
-@keyframes cursedBg {
-    0% { background: red; }
-    25% { background: lime; }
-    50% { background: purple; }
-    75% { background: black; }
-    100% { background: hotpink; }
-}
-
-/* ===== MAIN UI ===== */
-
 #mainUI {
     position: fixed;
     inset: 0;
@@ -45,7 +30,6 @@ body {
     overflow-y: auto;
     padding-top: 20px;
     padding-bottom: 220px;
-    z-index: 20;
 }
 
 #anne {
@@ -54,11 +38,6 @@ body {
     border-radius: 20px;
     cursor: pointer;
     box-shadow: 0 0 25px hotpink;
-    transition: transform 0.2s ease;
-}
-
-#anne:hover {
-    transform: scale(1.05);
 }
 
 .boop {
@@ -66,33 +45,15 @@ body {
 }
 
 @keyframes boopAnim {
-    0% { transform: scale(1); }
     50% { transform: scale(1.15) rotate(4deg); }
-    100% { transform: scale(1); }
 }
 
-#text {
-    margin-top: 15px;
-    background: white;
-    padding: 10px 14px;
-    border-radius: 12px;
-    font-weight: bold;
-    text-align: center;
-    max-width: 520px;
-    box-shadow: 0 0 12px rgba(0,0,0,0.15);
-}
-
-#counter {
+#text, #counter {
     margin-top: 10px;
-    background: rgba(255,255,255,0.85);
-    padding: 8px 12px;
+    background: white;
+    padding: 10px;
     border-radius: 10px;
-    font-weight: bold;
-    text-align: center;
-    max-width: 760px;
 }
-
-/* ===== SHOP / SAVE / CHEATS ===== */
 
 #shop, #saveBox, #cheatBox {
     display: none;
@@ -101,77 +62,32 @@ body {
     padding: 12px;
     border-radius: 14px;
     box-shadow: 0 0 14px hotpink;
-    text-align: center;
-    z-index: 50;
-    max-width: 720px;
 }
 
 button {
     margin: 4px;
-    padding: 8px 10px;
+    padding: 8px;
     border-radius: 10px;
     border: none;
     background: hotpink;
     color: white;
     font-weight: bold;
-    cursor: pointer;
 }
 
-button:disabled {
-    background: gray;
-    cursor: not-allowed;
-}
-
-input, select {
-    padding: 7px;
+input {
+    padding: 6px;
     border-radius: 8px;
     border: 2px solid hotpink;
-    margin: 4px;
 }
 
-/* ===== BOUNCY ANNES ===== */
-
-.bouncingAnne {
+.particle {
     position: absolute;
-    width: 130px;
-    border-radius: 14px;
-    box-shadow: 0 0 20px deeppink;
-    cursor: pointer;
-    z-index: 5;
-}
-
-.hyperBouncingAnne {
-    position: absolute;
-    width: 150px;
-    border-radius: 16px;
-    box-shadow: 0 0 35px cyan, 0 0 18px hotpink;
-    cursor: pointer;
-    z-index: 6;
-    filter: saturate(1.5);
-}
-
-/* ===== PARTICLES ===== */
-
-.particle, .floating {
-    position: absolute;
-    font-size: 24px;
-    pointer-events: none;
     animation: floatUp 1s forwards;
-    z-index: 999;
 }
 
 @keyframes floatUp {
-    0% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-    100% {
-        opacity: 0;
-        transform: translateY(-80px) scale(1.5) rotate(20deg);
-    }
+    to { transform: translateY(-80px); opacity: 0; }
 }
-
-/* ===== HYPER CODE BOX ===== */
 
 #hyperCodeBox {
     display: none;
@@ -181,117 +97,129 @@ input, select {
     background: white;
     padding: 10px;
     border-radius: 12px;
-    box-shadow: 0 0 15px cyan;
-    z-index: 99999;
-    text-align: center;
-}
-
-#hyperCodeBox h3 {
-    margin: 0 0 8px 0;
-}
-
-/* ===== BLUE SCREEN ===== */
-
-#blueScreen {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: #0078d7;
-    color: white;
-    padding: 40px;
-    z-index: 999999;
-    font-family: Consolas, monospace;
-    font-size: 22px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="blueScreen">
-    <h1>:(</h1>
-    <p>Your Anne Booper ran into a problem and needs to restart.</p>
-    <p>Error: TOO_MANY_BOOPS_DETECTED</p>
-    <p>Resetting game...</p>
-</div>
-
 <div id="mainUI">
-
-    <img id="anne" src="Anne.png" alt="Anne Booper">
-
+    <img id="anne" src="Anne.png">
     <div id="text">Click Anne 👆</div>
-    <div id="counter">Boops: 0 | Spendable: 0 | Per Click: 1</div>
+    <div id="counter">Boops: 0</div>
 
     <div id="shop">
-        <h3>🛒 Anne Shop</h3>
-
-        <button id="buyBouncing">Bouncy Anne (15)</button>
-        <button id="buyHyper">Hyper Anne (45)</button>
-        <button id="buyCannon">Confetti (50)</button>
-        <button id="buyDuplicater">Duplicater (150)</button>
+        <button id="buyBouncing">Bouncy Anne</button>
+        <button id="buyHyper">Hyper Anne</button>
+        <button id="buyCannon">Confetti</button>
+        <button id="buyDuplicater">Duplicater</button>
     </div>
 
     <div id="saveBox">
-        <h3>💾 Save Slots</h3>
         <select id="saveSlot"></select>
         <button id="saveGame">Save</button>
         <button id="loadGame">Load</button>
     </div>
 
     <div id="cheatBox">
-        <h3>🎁 Cheat Codes</h3>
-        <input id="cheatInput" placeholder="Enter cheat code">
-        <button id="useCheat">Use Code</button>
+        <input id="cheatInput">
+        <button id="useCheat">Use</button>
     </div>
-
 </div>
 
 <div id="hyperCodeBox">
-    <h3>⚡ Hyper Anne Code</h3>
-    <input id="hyperCodeInput" placeholder="Enter secret code">
+    <input id="hyperCodeInput">
     <button id="submitHyperCode">Unlock</button>
 </div>
 
 <script>
-/* ===== MESSAGES ===== */
 
-const messages = [
-    "Psych time!",
-    "Psych while pimple popping.",
-    "I love to pop my pimples",
-    "Emergency dopamine requested",
-    "Anne.exe stopped working",
-    "How’s your poop today?",
-    "Gus, don’t be ridiculous",
-    "I’ve heard it both ways",
-    "This boop has consequences",
-    "You’re addicted now",
-    "Anne is multiplying",
-    "Click faster",
-    "The shop is alive",
-    "Auto boopers incoming",
-    "You need upgrades",
-    "This is only the beginning",
-    "Anne is judging your clicks",
-    "You missed a boop. She noticed.",
-    "This feels like a bad financial decision",
-    "The duplicater hungers.",
-    "Confetti is now affordable.",
-    "Anne demands more boops.",
-    "Boop economy rising.",
-    "This game is becoming suspicious.",
-    "Hyper Anne knows the code.",
-    "Bouncy Annes are unionizing.",
-    "Manual boops are still superior.",
-    "The shop whispers: spend it.",
-    "You are becoming too powerful.",
-    "Anne has entered business mode.",
-    "Did you chart that or are you living dangerously?"
-];/* ===== STATE ===== */
+/* ===== BASE ===== */
+
+const messages = ["Psych time!", "Anne is watching.", "Boop again."];
 
 let totalBoops = 0;
 let spendableBoops = 0;
 let perClick = 1;
+
+/* ===== NEW SYSTEMS ===== */
+
+let currentImage = "Anne.png";
+let customMessages = [];
+let usingCustomMessages = false;
+
+/* ===== ELEMENTS ===== */
+
+const img = document.getElementById("anne");
+const text = document.getElementById("text");
+const counter = document.getElementById("counter");
+
+/* ===== IMAGE CHANGER ===== */
+
+const imageChangerBox = document.createElement("div");
+imageChangerBox.innerHTML = `
+<h3>Image</h3>
+<button id="img1">1</button>
+<button id="img2">2</button>
+<button id="img3">3</button>
+<button id="img4">4</button>
+`;
+document.getElementById("mainUI").appendChild(imageChangerBox);
+
+function setAnneImage(src) {
+    currentImage = src;
+    img.src = src;
+}
+
+document.getElementById("img1").onclick = () => setAnneImage("Anne.png");
+document.getElementById("img2").onclick = () => setAnneImage("anne2.png");
+document.getElementById("img3").onclick = () => setAnneImage("anne3.png");
+document.getElementById("img4").onclick = () => setAnneImage("anne4.png");
+
+/* ===== CUSTOM MESSAGES ===== */
+
+const customBox = document.createElement("div");
+customBox.innerHTML = `
+<input id="customInput">
+<button id="addMsg">Add</button>
+<button id="toggleCustom">Toggle</button>
+`;
+document.getElementById("mainUI").appendChild(customBox);
+
+document.getElementById("addMsg").onclick = () => {
+    const val = document.getElementById("customInput").value;
+    if (val) customMessages.push(val);
+};
+
+document.getElementById("toggleCustom").onclick = () => {
+    usingCustomMessages = !usingCustomMessages;
+};
+
+/* ===== MESSAGE SELECTOR ===== */
+
+function getMsg() {
+    if (usingCustomMessages && customMessages.length > 0) {
+        return customMessages[Math.floor(Math.random() * customMessages.length)];
+    }
+    return messages[Math.floor(Math.random() * messages.length)];
+}
+
+/* ===== BOOP ===== */
+
+function boop(e) {
+    totalBoops++;
+    spendableBoops++;
+
+    text.textContent = getMsg();
+
+    img.classList.add("boop");
+    setTimeout(() => img.classList.remove("boop"), 200);
+
+    counter.textContent = "Boops: " + totalBoops;
+}
+
+img.addEventListener("click", boop);
+/* ===== 2/4 — STATE + SHOP + BOOP LOGIC ===== */
 
 let effectsBought = false;
 let cannonBought = false;
@@ -318,8 +246,6 @@ let autoThreeInterval = null;
 let resetting = false;
 let lastClickTime = Date.now();
 
-/* ===== PRICES ===== */
-
 const PRICE_BOUNCY = 15;
 const PRICE_HYPER = 45;
 const PRICE_CONFETTI = 50;
@@ -327,12 +253,6 @@ const PRICE_DUPLICATER = 150;
 const PRICE_AUTO_ONE = 1500;
 const PRICE_AUTO_TWO = 10000;
 const PRICE_AUTO_THREE = 50000;
-
-/* ===== ELEMENTS ===== */
-
-const img = document.getElementById("anne");
-const text = document.getElementById("text");
-const counter = document.getElementById("counter");
 
 const shop = document.getElementById("shop");
 const saveBox = document.getElementById("saveBox");
@@ -363,7 +283,7 @@ for (let i = 1; i <= 50; i++) {
     saveSlot.appendChild(option);
 }
 
-/* ===== AUTO SHOP BUTTONS CREATED SAFELY ===== */
+/* ===== AUTO SHOP BUTTONS ===== */
 
 const autoOneBtn = document.createElement("button");
 autoOneBtn.id = "buyAutoOne";
@@ -422,6 +342,9 @@ function updateCounter() {
     } else {
         cheatSideButton.style.display = "none";
     }
+
+    imageChangerBox.style.display = imageChangerUnlocked ? "block" : "none";
+    customBox.style.display = customMessagesUnlocked ? "block" : "none";
 
     buyBouncing.disabled = spendableBoops < PRICE_BOUNCY || bouncingAnneCount >= maxBouncingAnnes;
     buyHyper.disabled = spendableBoops < PRICE_HYPER || totalBoops < PRICE_HYPER || hyperBouncingBought;
@@ -486,11 +409,18 @@ function addBoops(amount, fromAuto = false) {
     updateCounter();
 }
 
+function getBoopMessage() {
+    if (usingCustomMessages && customMessages.length > 0) {
+        return customMessages[Math.floor(Math.random() * customMessages.length)];
+    }
+
+    return messages[Math.floor(Math.random() * messages.length)];
+}
+
 function boop(event) {
     if (resetting) return;
 
     lastClickTime = Date.now();
-
     addBoops(perClick, false);
 
     if (resetting) return;
@@ -502,7 +432,7 @@ function boop(event) {
     } else if (totalBoops >= 45 && totalBoops < 45 + perClick) {
         text.textContent = "HYPER ANNE UNLOCKED!";
     } else {
-        text.textContent = messages[Math.floor(Math.random() * messages.length)];
+        text.textContent = getBoopMessage();
     }
 
     img.classList.add("boop");
@@ -512,18 +442,15 @@ function boop(event) {
     const y = event.clientY || window.innerHeight / 2;
 
     showParticles(x, y);
-
-    if (cannonBought) {
-        confettiCannon();
-    }
+    if (cannonBought) confettiCannon();
 
     updateCounter();
 }
 
-img.addEventListener("click", event => {
+img.onclick = event => {
     event.stopPropagation();
     boop(event);
-});
+};
 
 /* ===== HYPER CODE ===== */
 
@@ -552,7 +479,7 @@ hyperCodeBox.addEventListener("pointerdown", event => event.stopPropagation());
 hyperCodeInput.addEventListener("click", event => event.stopPropagation());
 hyperCodeInput.addEventListener("pointerdown", event => event.stopPropagation());/* ===== BOUNCY ANNES ===== */
 
-function createBouncingAnne() {
+function createBouncingAnne(srcOverride = null) {
     if (bouncingAnneCount >= maxBouncingAnnes) return;
 
     const anne = {
@@ -561,10 +488,13 @@ function createBouncingAnne() {
         y: Math.random() * (window.innerHeight - 130),
         dx: (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 2),
         dy: (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 2),
-        size: 130
+        size: 130,
+        isEasterEgg: false
     };
 
-    anne.el.src = "Anne.png";
+    const imgSrc = srcOverride || currentImage;
+
+    anne.el.src = imgSrc;
     anne.el.className = "bouncingAnne";
 
     anne.el.addEventListener("click", e => {
@@ -579,6 +509,36 @@ function createBouncingAnne() {
 
     startBounceLoop();
     updateCounter();
+}
+
+/* ===== EASTER EGG ANNE (SPECIAL) ===== */
+
+function createOtherBouncyAnne() {
+    const anne = {
+        el: document.createElement("img"),
+        x: Math.random() * (window.innerWidth - 130),
+        y: Math.random() * (window.innerHeight - 130),
+        dx: 5,
+        dy: 5,
+        size: 130,
+        isEasterEgg: true
+    };
+
+    anne.el.src = "anne3.png";
+    anne.el.className = "bouncingAnne";
+
+    anne.el.style.boxShadow = "0 0 30px gold";
+
+    anne.el.addEventListener("click", e => {
+        e.stopPropagation();
+        addBoops(10); // bonus boops
+        text.textContent = "✨ Secret Anne gave bonus boops!";
+    });
+
+    document.body.appendChild(anne.el);
+    bouncingAnnes.push(anne);
+
+    startBounceLoop();
 }
 
 /* ===== HYPER ANNE ===== */
@@ -597,10 +557,9 @@ function createHyperAnne() {
         size: 150
     };
 
-    hyperBouncingAnne.el.src = "Anne.png";
+    hyperBouncingAnne.el.src = currentImage;
     hyperBouncingAnne.el.className = "hyperBouncingAnne";
 
-    /* DOES NOT BOOP */
     hyperBouncingAnne.el.addEventListener("click", e => {
         e.stopPropagation();
 
@@ -617,7 +576,7 @@ function createHyperAnne() {
     updateCounter();
 }
 
-/* ===== REMOVE ALL ANNES ===== */
+/* ===== REMOVE ALL ===== */
 
 function removeAllAnnes() {
     bouncingAnnes.forEach(a => a.el.remove());
@@ -651,7 +610,7 @@ function animateAnnes() {
     const all = [...bouncingAnnes];
     if (hyperBouncingAnne) all.push(hyperBouncingAnne);
 
-    /* MOVE + WALL COLLISION */
+    /* MOVE */
     all.forEach(a => {
         a.x += a.dx;
         a.y += a.dy;
@@ -669,7 +628,7 @@ function animateAnnes() {
         }
     });
 
-    /* COLLISIONS (STABLE) */
+    /* COLLISIONS */
     for (let i = 0; i < all.length; i++) {
         for (let j = i + 1; j < all.length; j++) {
             const a = all[i];
@@ -678,13 +637,11 @@ function animateAnnes() {
             const dx = (b.x + b.size / 2) - (a.x + a.size / 2);
             const dy = (b.y + b.size / 2) - (a.y + a.size / 2);
             const dist = Math.sqrt(dx * dx + dy * dy);
-
             const minDist = (a.size / 2 + b.size / 2);
 
             if (dist < minDist && dist > 0) {
                 const nx = dx / dist;
                 const ny = dy / dist;
-
                 const overlap = minDist - dist;
 
                 a.x -= nx * overlap / 2;
@@ -692,7 +649,6 @@ function animateAnnes() {
                 b.x += nx * overlap / 2;
                 b.y += ny * overlap / 2;
 
-                /* velocity swap */
                 const tempDX = a.dx;
                 const tempDY = a.dy;
 
@@ -706,7 +662,7 @@ function animateAnnes() {
         }
     }
 
-    /* APPLY POSITIONS */
+    /* APPLY */
     all.forEach(a => {
         a.el.style.left = a.x + "px";
         a.el.style.top = a.y + "px";
@@ -726,7 +682,7 @@ function startHyperIncome() {
 
     hyperInterval = setInterval(() => {
         addBoops(1, true);
-    }, 60000); // 1 boop per minute
+    }, 60000);
 }
 
 function stopHyperIncome() {
@@ -842,6 +798,11 @@ function saveData() {
         effectsBought,
         cannonBought,
         cheatCodeAdderUnlocked,
+        imageChangerUnlocked,
+        customMessagesUnlocked,
+        currentImage,
+        customMessages,
+        usingCustomMessages,
         bouncingAnneCount,
         hyperBouncingBought,
         autoTier
@@ -888,6 +849,15 @@ function loadGame() {
     effectsBought = !!save.effectsBought;
     cannonBought = !!save.cannonBought;
     cheatCodeAdderUnlocked = !!save.cheatCodeAdderUnlocked;
+    imageChangerUnlocked = !!save.imageChangerUnlocked;
+    customMessagesUnlocked = !!save.customMessagesUnlocked;
+
+    currentImage = save.currentImage || "Anne.png";
+    img.src = currentImage;
+
+    customMessages = save.customMessages || [];
+    usingCustomMessages = !!save.usingCustomMessages;
+
     autoTier = save.autoTier || 0;
 
     for (let i = 0; i < (save.bouncingAnneCount || 0); i++) {
@@ -945,6 +915,11 @@ useCheat.onclick = event => {
 
         case "hyper":
             if (!hyperBouncingBought) createHyperAnne();
+            break;
+
+        case "otherbouncy": // 🎯 EASTER EGG
+            createOtherBouncyAnne();
+            text.textContent = "✨ Easter Egg Anne spawned!";
             break;
 
         case "effects":
@@ -1029,7 +1004,7 @@ function triggerBlueScreenReset() {
     }, 4000);
 }
 
-/* ===== PREVENT UI CLICK BUG ===== */
+/* ===== FIX UI CLICK BUG ===== */
 
 ["shop", "saveBox", "cheatBox", "hyperCodeBox"].forEach(id => {
     const el = document.getElementById(id);
@@ -1043,7 +1018,7 @@ function triggerBlueScreenReset() {
 
 setInterval(() => {
     if (!resetting && Date.now() - lastClickTime > 60000) {
-        text.textContent = "Anne interrupts: " + messages[Math.floor(Math.random() * messages.length)];
+        text.textContent = "Anne interrupts: " + getBoopMessage();
         lastClickTime = Date.now();
     }
 }, 5000);
@@ -1052,6 +1027,6 @@ setInterval(() => {
 
 updateCounter();
 
-</script>
+</script>e
 </body>
 </html>
