@@ -933,6 +933,198 @@ setInterval(() => {
 
 updateCounter();
 
+<script>
+/* ===== CLEAN CHEAT + HYPER CODE SYSTEM ===== */
+
+(function () {
+
+    const text = document.getElementById("text");
+    const cheatBox = document.getElementById("cheatBox");
+    const cheatInput = document.getElementById("cheatInput");
+    const useCheat = document.getElementById("useCheat");
+
+    const hyperBox = document.getElementById("hyperCodeBox");
+    const hyperInput = document.getElementById("hyperCodeInput");
+    const hyperBtn = document.getElementById("submitHyperCode");
+
+    const mainUI = document.getElementById("mainUI");
+
+    if (!text || !mainUI) return;
+
+    /* ===== CREATE CHEAT BUTTON ===== */
+
+    let cheatBtn = document.getElementById("cheatButton");
+
+    if (!cheatBtn) {
+        cheatBtn = document.createElement("button");
+        cheatBtn.id = "cheatButton";
+        cheatBtn.textContent = "🎁 Cheat Codes";
+        cheatBtn.style.display = "none";
+        mainUI.appendChild(cheatBtn);
+    }
+
+    cheatBtn.onclick = (e) => {
+        e.stopPropagation();
+        cheatBox.style.display = "block";
+        cheatInput.focus();
+        text.textContent = "Enter a cheat code.";
+    };
+
+    /* Show button only when unlocked */
+    setInterval(() => {
+        cheatBtn.style.display = (window.cheatCodeAdderUnlocked ? "inline-block" : "none");
+    }, 300);
+
+    /* ===== HYPER ANNE CODE ===== */
+
+    if (hyperBtn) {
+        hyperBtn.onclick = function () {
+            const code = hyperInput.value.trim();
+
+            if (code === "Hwi7k%") {
+                window.cheatCodeAdderUnlocked = true;
+                window.imageChangerUnlocked = true;
+                window.customMessagesUnlocked = true;
+
+                hyperBox.style.display = "none";
+                hyperInput.value = "";
+
+                text.textContent = "SECRET ACCEPTED: Cheat Codes + Custom Features unlocked!";
+            } else {
+                text.textContent = "Wrong code.";
+            }
+        };
+    }
+
+    /* Prevent clicks from breaking game */
+    if (hyperBox) {
+        hyperBox.addEventListener("click", e => e.stopPropagation());
+        hyperBox.addEventListener("pointerdown", e => e.stopPropagation());
+    }
+
+    /* ===== CHEAT CODES ===== */
+
+    if (useCheat) {
+        useCheat.onclick = function (e) {
+            e.stopPropagation();
+
+            const code = cheatInput.value.trim().toLowerCase();
+
+            function giveBoops(n) {
+                window.totalBoops += n;
+                window.spendableBoops += n;
+            }
+
+            switch (code) {
+
+                case "psych":
+                    giveBoops(1000);
+                    text.textContent = "+1000 boops";
+                    break;
+
+                case "pimple":
+                    giveBoops(10000);
+                    text.textContent = "+10000 boops";
+                    break;
+
+                case "rich":
+                    giveBoops(50000);
+                    text.textContent = "+50000 boops";
+                    break;
+
+                case "boopgod":
+                    giveBoops(1000000);
+                    window.duplicaterLevel = 10;
+                    window.autoTier = 3;
+                    if (window.startAutoBoopers) startAutoBoopers();
+                    text.textContent = "YOU ASCENDED";
+                    break;
+
+                case "max":
+                    window.duplicaterLevel = 10;
+                    text.textContent = "Duplicater MAX";
+                    break;
+
+                case "bouncy":
+                    if (window.createBouncingAnne) createBouncingAnne();
+                    text.textContent = "Bouncy spawned";
+                    break;
+
+                case "bouncymax":
+                    while (window.bouncingAnneCount < window.maxBouncingAnnes) {
+                        createBouncingAnne();
+                    }
+                    text.textContent = "MAX ANNES";
+                    break;
+
+                case "hyper":
+                    if (!window.hyperBouncingBought && window.createHyperAnne) {
+                        createHyperAnne();
+                    }
+                    text.textContent = "Hyper Anne unlocked";
+                    break;
+
+                case "effects":
+                    window.effectsBought = true;
+                    text.textContent = "Effects ON";
+                    break;
+
+                case "cannon":
+                case "confetti":
+                    window.cannonBought = true;
+                    text.textContent = "Confetti ON";
+                    break;
+
+                case "auto1":
+                    window.autoTier = 1;
+                    if (window.startAutoBoopers) startAutoBoopers();
+                    text.textContent = "Auto 1";
+                    break;
+
+                case "auto2":
+                    window.autoTier = 2;
+                    if (window.startAutoBoopers) startAutoBoopers();
+                    text.textContent = "Auto 2";
+                    break;
+
+                case "auto3":
+                    window.autoTier = 3;
+                    if (window.startAutoBoopers) startAutoBoopers();
+                    text.textContent = "Auto 3";
+                    break;
+
+                case "free":
+                    window.effectsBought = true;
+                    window.cannonBought = true;
+                    window.duplicaterLevel = 10;
+                    window.autoTier = 3;
+
+                    if (window.startAutoBoopers) startAutoBoopers();
+
+                    while (window.bouncingAnneCount < window.maxBouncingAnnes) {
+                        createBouncingAnne();
+                    }
+
+                    if (!window.hyperBouncingBought) createHyperAnne();
+
+                    text.textContent = "Everything unlocked";
+                    break;
+
+                case "reset":
+                    location.reload();
+                    break;
+
+                default:
+                    text.textContent = "Invalid code";
+            }
+
+            cheatInput.value = "";
+
+            if (window.updateCounter) updateCounter();
+        };
+    }
+
+})();
 </script>
 </body>
 </html>
