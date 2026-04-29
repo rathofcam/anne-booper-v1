@@ -1417,6 +1417,155 @@ document.querySelectorAll("button, input, select, #shop, #saveBox, #cheatBox, #h
 updateCamera();
 updateCounter();
 
+<script>
+/* ===== UNIVERSAL CAMERA SYSTEM (PC + MOBILE + CONTROLLER) ===== */
+
+(function(){
+
+    if (typeof gameWorld === "undefined") return;
+
+    let camX = typeof cameraX !== "undefined" ? cameraX : 0;
+    let camY = typeof cameraY !== "undefined" ? cameraY : 0;
+    let camZoom = typeof cameraZoom !== "undefined" ? cameraZoom : 1;
+
+    const MIN_ZOOM = 0.5;
+    const MAX_ZOOM = 2;
+
+    function applyCamera() {
+        camZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, camZoom));
+
+        gameWorld.style.transform =
+            `translate(${camX}px, ${camY}px) scale(${camZoom})`;
+
+        if (typeof cameraX !== "undefined") cameraX = camX;
+        if (typeof cameraY !== "undefined") cameraY = camY;
+        if (typeof cameraZoom !== "undefined") cameraZoom = camZoom;
+    }
+
+    /* ===== COMPUTER (MOUSE) ===== */
+
+    let dragging = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    window.addEventListener("pointerdown", e => {
+        if (e.target.closest("#mainUI")) return;
+        if (e.target.closest("#hyperCodeBox")) return;
+        if (e.target.classList.contains("ball")) return;
+
+        dragging = true;
+        lastX = e.clientX;
+        lastY = e.clientY;
+    });
+
+    window.addEventListener("pointermove", e => {
+        if (!dragging) return;
+
+        camX += (e.clientX - lastX);
+        camY += (e.clientY - lastY);
+
+        lastX = e.clientX;
+        lastY = e.clientY;
+
+        applyCamera();
+    });
+
+    window.addEventListener("pointerup", () => dragging = false);
+    window.addEventListener("pointercancel", () => dragging = false);
+
+    window.addEventListener("wheel", e => {
+        if (e.target.closest("#mainUI")) return;
+
+        e.preventDefault();
+
+        const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+
+        const rect = gameWorld.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        const worldX = mouseX / camZoom;
+        const worldY = mouseY / camZoom;
+
+        camZoom *= zoomFactor;
+
+        camX = e.clientX - worldX * camZoom;
+        camY = e.clientY - worldY * camZoom;
+
+        applyCamera();
+    }, { passive:false });
+
+    /* ===== MOBILE (PINCH ZOOM) ===== */
+
+    let pinchStartDist = null;
+    let pinchStartZoom = 1;
+
+    function getDist(t1, t2) {
+        return Math.hypot(
+            t1.clientX - t2.clientX,
+            t1.clientY - t2.clientY
+        );
+    }
+
+    window.addEventListener("touchstart", e => {
+        if (e.touches.length === 2) {
+            pinchStartDist = getDist(e.touches[0], e.touches[1]);
+            pinchStartZoom = camZoom;
+        }
+    });
+
+    window.addEventListener("touchmove", e => {
+        if (e.touches.length === 2 && pinchStartDist) {
+            e.preventDefault();
+
+            const newDist = getDist(e.touches[0], e.touches[1]);
+            camZoom = pinchStartZoom * (newDist / pinchStartDist);
+
+            applyCamera();
+        }
+    }, { passive:false });
+
+    window.addEventListener("touchend", () => {
+        pinchStartDist = null;
+    });
+
+    /* ===== CONTROLLER (XBOX / GAMEPAD) ===== */
+
+    function gamepadLoop() {
+        const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+
+        if (pads[0]) {
+            const gp = pads[0];
+
+            const deadzone = 0.1;
+
+            let lx = gp.axes[0];
+            let ly = gp.axes[1];
+
+            if (Math.abs(lx) < deadzone) lx = 0;
+            if (Math.abs(ly) < deadzone) ly = 0;
+
+            camX += lx * 10;
+            camY += ly * 10;
+
+            const zoomIn = gp.buttons[7]?.value || 0;
+            const zoomOut = gp.buttons[6]?.value || 0;
+
+            if (zoomIn > 0.1) camZoom *= 1 + zoomIn * 0.05;
+            if (zoomOut > 0.1) camZoom *= 1 - zoomOut * 0.05;
+
+            applyCamera();
+        }
+
+        requestAnimationFrame(gamepadLoop);
+    }
+
+    gamepadLoop();
+
+    /* ===== INIT ===== */
+    applyCamera();
+
+})();
 </script>
 </body>
 </html>
